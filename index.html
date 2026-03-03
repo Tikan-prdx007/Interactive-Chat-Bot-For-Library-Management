@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LibraMate — AI Library & Study Companion</title>
+  <meta name="description"
+    content="LibraMate: Your AI-powered interactive library and study companion. Search books, track progress, get tutored, and level up your academics." />
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- Load theme BEFORE render to prevent flash -->
+  <script src="js/theme.js"></script>
+</head>
+
+<body>
+
+  <div id="app-shell" style="display:none">
+
+    <!-- ── Sidebar ─────────────────────────────────────────────────────────── -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <a class="brand-logo">
+          <div class="brand-icon">📖</div>
+          <div>
+            <div class="brand-name">LibraMate</div>
+            <div class="brand-tag">AI Study Companion</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="sidebar-user">
+        <div class="user-avatar" id="header-avatar">👨‍🎓</div>
+        <div>
+          <div class="user-name" id="header-name">Student</div>
+          <div class="user-level" id="player-level">Scholar</div>
+        </div>
+      </div>
+
+      <nav id="sidebar-nav"></nav>
+
+      <div class="sidebar-xp">
+        <div class="xp-label-row">
+          <span id="xp-label">-- XP</span>
+        </div>
+        <div class="xp-track">
+          <div class="xp-fill" id="xp-bar" style="width:0%"></div>
+        </div>
+      </div>
+
+      <div class="sidebar-reset">
+        <button class="btn-reset" onclick="if(confirm('Reset all progress?')) AppState.reset()">🔄 Reset
+          Progress</button>
+      </div>
+    </aside>
+
+    <!-- ── Main Content ───────────────────────────────────────────────────── -->
+    <div class="main">
+
+      <!-- Header -->
+      <header class="header">
+        <div class="header-left">
+          <h1>📖 LibraMate</h1>
+          <p>AI-Powered Library & Study Companion</p>
+        </div>
+        <div class="header-right">
+          <span id="notif-bell-icon" onclick="Settings.open()" title="Notifications & Settings">🔔</span>
+          <button id="theme-toggle" onclick="Theme.toggle()" title="Toggle light/dark mode">☀️</button>
+          <div class="header-avatar-chip">
+            <span class="chip-avatar" id="header-avatar-chip">👨‍🎓</span>
+            <div class="chip-info">
+              <span class="chip-name" id="header-name-chip">Student</span>
+              <span class="chip-level" id="header-level">Scholar</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Panel Content -->
+      <div class="content">
+
+        <!-- Home Panel -->
+        <div class="panel" id="panel-home"></div>
+
+        <!-- Library Panel -->
+        <div class="panel" id="panel-library"></div>
+
+        <!-- Dashboard Panel -->
+        <div class="panel" id="panel-dashboard"></div>
+
+        <!-- Tutor Panel -->
+        <div class="panel" id="panel-tutor"></div>
+
+        <!-- Chat Panel -->
+        <div class="panel" id="panel-chat"></div>
+
+        <!-- Voice Panel -->
+        <div class="panel" id="panel-voice"></div>
+
+      </div><!-- /content -->
+    </div><!-- /main -->
+
+  </div><!-- /app-shell -->
+
+  <!-- ── Scripts (order matters!) ──────────────────────────────────────────── -->
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/gamification.js"></script>
+  <script src="js/bput_data.js"></script>
+  <script src="js/library.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/tutor.js"></script>
+  <script src="js/chat.js"></script>
+  <script src="js/voice.js"></script>
+  <script src="js/login.js"></script>
+  <script src="js/settings.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+
+</html>
