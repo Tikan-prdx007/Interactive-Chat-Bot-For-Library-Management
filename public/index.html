@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LibraMate (KMBB CET)</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brandMark" aria-hidden="true">LM</div>
+          <div>
+            <div class="brandTitle">LibraMate (KMBB CET)</div>
+            <div class="brandSub">Library Management • Search • Reserve • Issue • Return</div>
+          </div>
+        </div>
+        <div class="status">
+          <span id="dot" class="dot" aria-hidden="true"></span>
+          <span id="statusText" class="statusText">Ready</span>
+        </div>
+      </header>
+
+      <main class="content">
+        <section class="chatCard">
+          <div class="chatHeader">
+            <div class="chatHeaderTitle">Chat</div>
+            <button id="clearBtn" type="button" class="ghostBtn">Clear</button>
+          </div>
+
+          <div id="chatBody" class="chatBody" role="log" aria-live="polite"></div>
+
+          <form id="chatForm" class="chatInput">
+            <input
+              id="chatInput"
+              class="textInput"
+              placeholder='Type: "search title Clean Code"'
+              aria-label="Message"
+              autocomplete="off"
+            />
+            <button id="sendBtn" class="primaryBtn" type="submit">Send</button>
+          </form>
+          <div id="error" class="error" style="display: none"></div>
+        </section>
+
+        <aside class="side">
+          <section class="panel">
+            <div class="panelTitle">Quick actions</div>
+            <div class="quickGrid">
+              <button class="quickBtn" data-text="search title Clean Code" type="button">
+                <div class="quickLabel">Search by title</div>
+                <div class="quickText">search title Clean Code</div>
+              </button>
+              <button class="quickBtn" data-text="availability 1" type="button">
+                <div class="quickLabel">Check availability</div>
+                <div class="quickText">availability 1</div>
+              </button>
+              <button class="quickBtn" data-text="reserve 1" type="button">
+                <div class="quickLabel">Reserve a book</div>
+                <div class="quickText">reserve 1</div>
+              </button>
+              <button class="quickBtn" data-text="similar 1" type="button">
+                <div class="quickLabel">Similar recommendations</div>
+                <div class="quickText">similar 1</div>
+              </button>
+              <button class="quickBtn" data-text="issue 1" type="button">
+                <div class="quickLabel">Issue a book</div>
+                <div class="quickText">issue 1</div>
+              </button>
+              <button class="quickBtn" data-text="return 1" type="button">
+                <div class="quickLabel">Return a book</div>
+                <div class="quickText">return 1</div>
+              </button>
+              <button class="quickBtn" data-text="due 1" type="button">
+                <div class="quickLabel">Check due date</div>
+                <div class="quickText">due 1</div>
+              </button>
+              <button class="quickBtn" data-text="fine 1" type="button">
+                <div class="quickLabel">Calculate fine</div>
+                <div class="quickText">fine 1</div>
+              </button>
+              <button class="quickBtn" data-text="timings" type="button">
+                <div class="quickLabel">Library timings</div>
+                <div class="quickText">timings</div>
+              </button>
+              <button class="quickBtn" data-text="rules" type="button">
+                <div class="quickLabel">Library rules</div>
+                <div class="quickText">rules</div>
+              </button>
+              <button class="quickBtn" data-text="help" type="button">
+                <div class="quickLabel">Help</div>
+                <div class="quickText">help</div>
+              </button>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panelTitle">Notes</div>
+            <div class="panelBody">
+              <div class="noteLine">- Use <b>book id</b> (example: <code>issue 3</code>) or a <b>title</b> (example: <code>issue title The Hobbit</code>).</div>
+              <div class="noteLine">- Default member is <b>#1</b> (Tikan Samad).</div>
+              <div class="noteLine">- Fine is demoed at <b>₹5/day</b>.</div>
+            </div>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <script>
+      const $ = (id) => document.getElementById(id);
+      const chatBody = $("chatBody");
+      const input = $("chatInput");
+      const form = $("chatForm");
+      const clearBtn = $("clearBtn");
+      const sendBtn = $("sendBtn");
+      const error = $("error");
+      const dot = $("dot");
+      const statusText = $("statusText");
+
+      const now = () => new Date().toLocaleString();
+
+      function setBusy(busy) {
+        if (busy) {
+          dot.className = "dot dotBusy";
+          statusText.textContent = "Thinking…";
+          sendBtn.disabled = true;
+          input.disabled = true;
+        } else {
+          dot.className = "dot";
+          statusText.textContent = "Ready";
+          sendBtn.disabled = false;
+          input.disabled = false;
+          input.focus();
+        }
+      }
+
+      function addMessage(role, text) {
+        const row = document.createElement("div");
+        row.className = role === "user" ? "row rowUser" : "row rowBot";
+        const bubble = document.createElement("div");
+        bubble.className = role === "user" ? "bubble bubbleUser" : "bubble bubbleBot";
+        const bubbleText = document.createElement("div");
+        bubbleText.className = "bubbleText";
+        bubbleText.textContent = text;
+        const meta = document.createElement("div");
+        meta.className = "bubbleMeta";
+        meta.textContent = now();
+        bubble.appendChild(bubbleText);
+        bubble.appendChild(meta);
+        row.appendChild(bubble);
+        chatBody.appendChild(row);
+        chatBody.scrollTo({ top: chatBody.scrollHeight, behavior: "smooth" });
+      }
+
+      async function sendMessage(msg) {
+        const text = String(msg || "").trim();
+        if (!text) return;
+        error.style.display = "none";
+        error.textContent = "";
+        addMessage("user", text);
+        input.value = "";
+        setBusy(true);
+        try {
+          const resp = await fetch("/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: text, memberId: 1 })
+          });
+          const data = await resp.json().catch(() => null);
+          if (!resp.ok || !data || !data.ok) throw new Error("Request failed");
+          addMessage("bot", String(data.reply || ""));
+        } catch (e) {
+          error.style.display = "block";
+          error.textContent = "Server not reachable. Start LibraMate backend and refresh.";
+          addMessage("bot", "I couldn’t reach the server. Make sure the backend is running on port 5050.");
+        } finally {
+          setBusy(false);
+        }
+      }
+
+      document.querySelectorAll(".quickBtn").forEach((btn) => {
+        btn.addEventListener("click", () => sendMessage(btn.getAttribute("data-text")));
+      });
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        sendMessage(input.value);
+      });
+
+      clearBtn.addEventListener("click", () => {
+        chatBody.innerHTML = "";
+        addMessage(
+          "bot",
+          "Welcome back, Tikan!\\nI’m LibraMate — your Interactive Library & Study Companion at KMBB CET.\\n\\nYou’re in 📚 Library Management Mode.\\nType `help` to see commands, or use the quick actions."
+        );
+      });
+
+      // Initial greeting
+      addMessage(
+        "bot",
+        "Welcome back, Tikan!\\nI’m LibraMate — your Interactive Library & Study Companion at KMBB CET.\\n\\nYou’re in 📚 Library Management Mode.\\nType `help` to see commands, or use the quick actions."
+      );
+      input.focus();
+    </script>
+  </body>
+</html>
+

@@ -172,7 +172,7 @@ const App = (() => {
             <div class="quick-card" onclick="App.navigate('dashboard')"><div class="qc-icon">📊</div><div class="qc-title">Dashboard</div><div class="qc-desc">Track your stats & performance</div></div>
             <div class="quick-card" onclick="App.navigate('tutor')"><div class="qc-icon">🧠</div><div class="qc-title">Tutor</div><div class="qc-desc">Learn with explanations & quizzes</div></div>
             <div class="quick-card" onclick="App.navigate('chat')"><div class="qc-icon">💬</div><div class="qc-title">AI Chat</div><div class="qc-desc">Get personalized academic help</div></div>
-            <div class="quick-card" onclick="App.navigate('voice')"><div class="qc-icon">🎤</div><div class="qc-title">Voice Mode</div><div class="qc-desc">Talk to LibraMate hands-free</div></div>
+            <div class="quick-card" onclick="App.navigate('voice')"><div class="qc-icon">🎤</div><div class="qc-title">Voice Mode</div><div class="qc-desc">Talk to SHELFBOT hands-free</div></div>
           </div>
           <div class="home-recommend">
             <h3>📌 Recommended for You, ${s.name}</h3>

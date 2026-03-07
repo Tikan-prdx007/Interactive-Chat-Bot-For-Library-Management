@@ -3,16 +3,16 @@
 
 const LoginScreen = (() => {
 
-    const AVATARS = ["👨‍🎓", "👩‍🎓", "🧑‍💻", "👩‍💻", "🧑‍🔬", "👩‍🔬", "🧑‍🏫", "👩‍🏫", "🧙", "🦸"];
+  const AVATARS = ["👨‍🎓", "👩‍🎓", "🧑‍💻", "👩‍💻", "🧑‍🔬", "👩‍🔬", "🧑‍🏫", "👩‍🏫", "🧙", "🦸"];
 
-    function show() {
-        // Hide the main app shell until logged in
-        const shell = document.getElementById("app-shell");
-        if (shell) shell.style.display = "none";
+  function show() {
+    // Hide the main app shell until logged in
+    const shell = document.getElementById("app-shell");
+    if (shell) shell.style.display = "none";
 
-        const overlay = document.createElement("div");
-        overlay.id = "login-overlay";
-        overlay.innerHTML = `
+    const overlay = document.createElement("div");
+    overlay.id = "login-overlay";
+    overlay.innerHTML = `
       <div class="login-bg">
         <div class="login-orbs">
           <div class="orb orb1"></div>
@@ -21,9 +21,9 @@ const LoginScreen = (() => {
         </div>
         <div class="login-card">
           <div class="login-brand">
-            <div class="login-logo">📖</div>
+            <div class="login-logo" style="width:72px;height:72px;overflow:hidden;border-radius:14px;"><img src="logo.jpg" alt="SHELFBOT Logo" style="width:100%;height:100%;object-fit:cover;"></div>
             <div class="login-brand-text">
-              <div class="login-brand-name">LibraMate</div>
+              <div class="login-brand-name">SHELFBOT</div>
               <div class="login-brand-sub">AI-Powered Library & Study Companion</div>
             </div>
           </div>
@@ -97,106 +97,106 @@ const LoginScreen = (() => {
           <p class="login-footer">Your progress is saved privately for your account only 🔒</p>
         </div>
       </div>`;
-        document.body.insertBefore(overlay, document.body.firstChild);
-        renderQuickSwitch();
-    }
+    document.body.insertBefore(overlay, document.body.firstChild);
+    renderQuickSwitch();
+  }
 
-    function hide() {
-        const overlay = document.getElementById("login-overlay");
-        if (overlay) {
-            overlay.classList.add("login-fade-out");
-            setTimeout(() => overlay.remove(), 400);
-        }
-        const shell = document.getElementById("app-shell");
-        if (shell) shell.style.display = "flex";
+  function hide() {
+    const overlay = document.getElementById("login-overlay");
+    if (overlay) {
+      overlay.classList.add("login-fade-out");
+      setTimeout(() => overlay.remove(), 400);
     }
+    const shell = document.getElementById("app-shell");
+    if (shell) shell.style.display = "flex";
+  }
 
-    function switchTab(tab) {
-        document.getElementById("form-login").style.display = tab === "login" ? "flex" : "none";
-        document.getElementById("form-register").style.display = tab === "register" ? "flex" : "none";
-        document.getElementById("tab-login").classList.toggle("active", tab === "login");
-        document.getElementById("tab-register").classList.toggle("active", tab === "register");
-        setError("");
-    }
+  function switchTab(tab) {
+    document.getElementById("form-login").style.display = tab === "login" ? "flex" : "none";
+    document.getElementById("form-register").style.display = tab === "register" ? "flex" : "none";
+    document.getElementById("tab-login").classList.toggle("active", tab === "login");
+    document.getElementById("tab-register").classList.toggle("active", tab === "register");
+    setError("");
+  }
 
-    function setError(msg) {
-        const el = document.getElementById("login-error");
-        if (!el) return;
-        if (msg) { el.textContent = msg; el.style.display = "block"; }
-        else { el.style.display = "none"; }
-    }
+  function setError(msg) {
+    const el = document.getElementById("login-error");
+    if (!el) return;
+    if (msg) { el.textContent = msg; el.style.display = "block"; }
+    else { el.style.display = "none"; }
+  }
 
-    function setLoading(btnId, loading) {
-        const btn = document.getElementById(btnId);
-        if (!btn) return;
-        btn.disabled = loading;
-        btn.textContent = loading ? "Please wait…" : btn.getAttribute("data-label") || btn.textContent;
-    }
+  function setLoading(btnId, loading) {
+    const btn = document.getElementById(btnId);
+    if (!btn) return;
+    btn.disabled = loading;
+    btn.textContent = loading ? "Please wait…" : btn.getAttribute("data-label") || btn.textContent;
+  }
 
-    function doLogin(e) {
-        e.preventDefault();
-        setError("");
-        const username = document.getElementById("login-username").value.trim();
-        const password = document.getElementById("login-password").value;
-        const remember = document.getElementById("login-remember").checked;
-        const result = Auth.login({ username, password, remember });
-        if (!result.ok) { setError(result.error); return; }
-        hide();
-        App.afterLogin();
-    }
+  function doLogin(e) {
+    e.preventDefault();
+    setError("");
+    const username = document.getElementById("login-username").value.trim();
+    const password = document.getElementById("login-password").value;
+    const remember = document.getElementById("login-remember").checked;
+    const result = Auth.login({ username, password, remember });
+    if (!result.ok) { setError(result.error); return; }
+    hide();
+    App.afterLogin();
+  }
 
-    function doRegister(e) {
-        e.preventDefault();
-        setError("");
-        const displayName = document.getElementById("reg-displayname").value.trim();
-        const username = document.getElementById("reg-username").value.trim();
-        const password = document.getElementById("reg-password").value;
-        const confirm = document.getElementById("reg-confirm").value;
-        const avatar = document.querySelector(".av-opt.selected")?.dataset.av || "👨‍🎓";
-        if (password !== confirm) { setError("Passwords do not match."); return; }
-        const result = Auth.register({ username, displayName, password, avatar });
-        if (!result.ok) { setError(result.error); return; }
-        // Auto-login after registration
-        Auth.login({ username, password, remember: false });
-        hide();
-        App.afterLogin();
-    }
+  function doRegister(e) {
+    e.preventDefault();
+    setError("");
+    const displayName = document.getElementById("reg-displayname").value.trim();
+    const username = document.getElementById("reg-username").value.trim();
+    const password = document.getElementById("reg-password").value;
+    const confirm = document.getElementById("reg-confirm").value;
+    const avatar = document.querySelector(".av-opt.selected")?.dataset.av || "👨‍🎓";
+    if (password !== confirm) { setError("Passwords do not match."); return; }
+    const result = Auth.register({ username, displayName, password, avatar });
+    if (!result.ok) { setError(result.error); return; }
+    // Auto-login after registration
+    Auth.login({ username, password, remember: false });
+    hide();
+    App.afterLogin();
+  }
 
-    function pickAvatar(el) {
-        document.querySelectorAll(".av-opt").forEach(a => a.classList.remove("selected"));
-        el.classList.add("selected");
-    }
+  function pickAvatar(el) {
+    document.querySelectorAll(".av-opt").forEach(a => a.classList.remove("selected"));
+    el.classList.add("selected");
+  }
 
-    function togglePw(inputId, btn) {
-        const inp = document.getElementById(inputId);
-        if (inp.type === "password") { inp.type = "text"; btn.textContent = "🙈"; }
-        else { inp.type = "password"; btn.textContent = "👁"; }
-    }
+  function togglePw(inputId, btn) {
+    const inp = document.getElementById(inputId);
+    if (inp.type === "password") { inp.type = "text"; btn.textContent = "🙈"; }
+    else { inp.type = "password"; btn.textContent = "👁"; }
+  }
 
-    function renderQuickSwitch() {
-        const users = Auth.listUsers();
-        const wrap = document.getElementById("quick-switch");
-        if (!wrap || !users.length) return;
-        wrap.innerHTML = `<div class="qs-label">Quick sign-in as:</div>
+  function renderQuickSwitch() {
+    const users = Auth.listUsers();
+    const wrap = document.getElementById("quick-switch");
+    if (!wrap || !users.length) return;
+    wrap.innerHTML = `<div class="qs-label">Quick sign-in as:</div>
       <div class="qs-chips">
         ${users.map(u => {
-            const data = Auth.loadUserData(u);
-            const avatar = data?.meta?.avatar || "👤";
-            const name = data?.meta?.displayName || u;
-            return `<div class="qs-chip" onclick="LoginScreen.quickLogin('${u}')">
+      const data = Auth.loadUserData(u);
+      const avatar = data?.meta?.avatar || "👤";
+      const name = data?.meta?.displayName || u;
+      return `<div class="qs-chip" onclick="LoginScreen.quickLogin('${u}')">
             <span class="qs-av">${avatar}</span>
             <span class="qs-name">${name}</span>
           </div>`;
-        }).join("")}
+    }).join("")}
       </div>`;
-    }
+  }
 
-    function quickLogin(username) {
-        // Fill the username field and focus password
-        switchTab("login");
-        document.getElementById("login-username").value = username;
-        document.getElementById("login-password").focus();
-    }
+  function quickLogin(username) {
+    // Fill the username field and focus password
+    switchTab("login");
+    document.getElementById("login-username").value = username;
+    document.getElementById("login-password").focus();
+  }
 
-    return { show, hide, switchTab, doLogin, doRegister, pickAvatar, togglePw, quickLogin };
+  return { show, hide, switchTab, doLogin, doRegister, pickAvatar, togglePw, quickLogin };
 })();
