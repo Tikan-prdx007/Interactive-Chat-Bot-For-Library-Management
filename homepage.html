@@ -1,666 +1,411 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SHELFBOT — AI Library & Study Companion</title>
-    <meta name="description"
-        content="SHELFBOT is your AI-powered interactive library and study companion. Search books, track progress, get tutored, and level up your academics." />
-    <meta name="keywords" content="AI library, study companion, BPUT, books, education, chatbot, SHELFBOT" />
-    <meta property="og:title" content="SHELFBOT — AI Library & Study Companion" />
-    <meta property="og:description" content="Your AI-powered interactive library and study companion." />
-    <link rel="stylesheet" href="css/homepage.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SHELFBOT — Your AI Study Companion</title>
+  <meta name="description" content="SHELFBOT combines an AI tutor, digital library, and study dashboard to help university students learn faster and stay organized." />
+  <meta name="keywords" content="AI library, study companion, BPUT, books, education, chatbot, SHELFBOT" />
+  <link rel="stylesheet" href="css/homepage.css" />
 </head>
-
 <body>
 
-    <!-- ══════════════════════════════════════════════════════
-       NAVBAR
-  ══════════════════════════════════════════════════════ -->
-    <nav id="navbar" role="navigation" aria-label="Main navigation">
-        <div class="container">
-            <div class="nav-inner">
+  <!-- ═══════════════════════════════ NAVBAR ════════════════════════════════ -->
+  <nav id="navbar" role="navigation" aria-label="Main navigation">
+    <div class="container">
+      <div class="nav-inner">
 
-                <!-- Logo -->
-                <a href="homepage.html" class="nav-logo" aria-label="SHELFBOT Home">
-                    <div class="nav-logo-icon">
-                        <img src="logo.jpg" alt="SHELFBOT logo" />
-                    </div>
-                    <span class="nav-logo-text">SHELF<span>BOT</span></span>
-                </a>
+        <a href="homepage.html" class="nav-logo" aria-label="SHELFBOT Home">
+          <div class="nav-logo-icon">
+            <img src="logo.jpg" alt="SHELFBOT" />
+          </div>
+          <span class="nav-logo-text">SHELF<span>BOT</span></span>
+        </a>
 
-                <!-- Desktop links -->
-                <ul class="nav-links" role="list">
-                    <li><a href="#hero" class="nav-link" id="nl-home">Home</a></li>
-                    <li><a href="#features" class="nav-link" id="nl-features">Features</a></li>
-                    <li><a href="#about" class="nav-link" id="nl-about">About</a></li>
-                    <li><a href="#how-it-works" class="nav-link" id="nl-how">How It Works</a></li>
-                    <li><a href="#contact" class="nav-link" id="nl-contact">Contact</a></li>
-                </ul>
+        <ul class="nav-links" role="list">
+          <li><a href="#hero"        class="nav-link" id="nl-home">Home</a></li>
+          <li><a href="#features"    class="nav-link" id="nl-features">Features</a></li>
+          <li><a href="#about"       class="nav-link" id="nl-about">About</a></li>
+          <li><a href="#how-it-works" class="nav-link" id="nl-how">How It Works</a></li>
+          <li><a href="#contact"     class="nav-link" id="nl-contact">Contact</a></li>
+        </ul>
 
-                <!-- Desktop actions -->
-                <div class="nav-actions">
-                    <a href="index.html" class="btn-ghost" id="nav-login-btn">Login</a>
-                    <a href="index.html" class="btn-primary" id="nav-register-btn">Get Started →</a>
-                </div>
-
-                <!-- Hamburger (mobile) -->
-                <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle menu" aria-expanded="false">
-                    <span class="ham-line"></span>
-                    <span class="ham-line"></span>
-                    <span class="ham-line"></span>
-                </button>
-
-            </div>
+        <div class="nav-actions">
+          <a href="index.html" class="btn-ghost" id="nav-login-btn">Login</a>
+          <a href="index.html" class="btn-primary" id="nav-register-btn">Get Started →</a>
         </div>
-    </nav>
 
-    <!-- Mobile Menu -->
-    <div class="nav-mobile" id="nav-mobile" role="dialog" aria-modal="false" aria-label="Mobile navigation">
-        <a href="#hero" class="mobile-link" id="ml-home">🏠 Home</a>
-        <a href="#features" class="mobile-link" id="ml-features">✨ Features</a>
-        <a href="#about" class="mobile-link" id="ml-about">📖 About</a>
-        <a href="#how-it-works" class="mobile-link" id="ml-how">🗺️ How It Works</a>
-        <a href="#testimonials" class="mobile-link" id="ml-testi">💬 Testimonials</a>
-        <a href="#contact" class="mobile-link" id="ml-contact">📬 Contact</a>
-        <div class="mobile-divider"></div>
-        <div class="mobile-actions">
-            <a href="index.html" class="btn-ghost" id="mob-login-btn">Login</a>
-            <a href="index.html" class="btn-primary" id="mob-register-btn">Get Started →</a>
-        </div>
+        <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle menu" aria-expanded="false">
+          <span class="ham-line"></span>
+          <span class="ham-line"></span>
+          <span class="ham-line"></span>
+        </button>
+
+      </div>
     </div>
+  </nav>
 
+  <!-- Mobile Menu -->
+  <div class="nav-mobile" id="nav-mobile" role="dialog" aria-label="Mobile navigation">
+    <a href="#hero"         class="mobile-link" id="ml-home">🏠 Home</a>
+    <a href="#features"     class="mobile-link" id="ml-features">✨ Features</a>
+    <a href="#about"        class="mobile-link" id="ml-about">📖 About</a>
+    <a href="#how-it-works" class="mobile-link" id="ml-how">🗺️ How It Works</a>
+    <a href="#contact"      class="mobile-link" id="ml-contact">📬 Contact</a>
+    <div class="mobile-divider"></div>
+    <div class="mobile-actions">
+      <a href="index.html" class="btn-ghost" id="mob-login-btn">Login</a>
+      <a href="index.html" class="btn-primary" id="mob-register-btn">Get Started →</a>
+    </div>
+  </div>
 
-    <!-- ══════════════════════════════════════════════════════
-       HERO
-  ══════════════════════════════════════════════════════ -->
-    <section id="hero" aria-label="Hero section">
+  <!-- ═══════════════════════════════ HERO ═════════════════════════════════ -->
+  <section id="hero" aria-label="Hero section">
 
-        <!-- Background layers -->
-        <div class="hero-bg" aria-hidden="true"></div>
-        <div class="hero-grid" aria-hidden="true"></div>
-        <div class="hero-orb orb-1" aria-hidden="true"></div>
-        <div class="hero-orb orb-2" aria-hidden="true"></div>
-        <div class="hero-orb orb-3" aria-hidden="true"></div>
+    <!-- Subtle background -->
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
 
-        <!-- Floating decorative emojis -->
-        <div class="hero-float" aria-hidden="true" style="top:18%;left:8%;animation-duration:6s;">📚</div>
-        <div class="hero-float" aria-hidden="true" style="top:30%;right:9%;animation-duration:7s;animation-delay:1s;">🔬
+    <div class="container">
+      <div class="hero-content">
+
+        <!-- Status badge -->
+        <div class="hero-badge">
+          <span class="dot"></span>
+          Now available for BPUT students
         </div>
-        <div class="hero-float" aria-hidden="true"
-            style="bottom:22%;left:14%;animation-duration:8s;animation-delay:2s;">🤖</div>
-        <div class="hero-float" aria-hidden="true"
-            style="bottom:28%;right:12%;animation-duration:5.5s;animation-delay:0.5s;">🎓</div>
-        <div class="hero-float" aria-hidden="true"
-            style="top:55%;left:5%;animation-duration:9s;animation-delay:3s;font-size:1.5rem;">⚡</div>
-        <div class="hero-float" aria-hidden="true"
-            style="top:20%;right:28%;animation-duration:7.5s;animation-delay:1.5s;font-size:1.8rem;">📝</div>
 
-        <div class="container">
-            <div class="hero-content">
+        <!-- Headline -->
+        <h1 class="hero-heading">
+          Your Personal<br>
+          <span class="gradient-text">AI Study Companion</span>
+        </h1>
 
-                <div class="hero-badge" id="hero-badge">
-                    <span class="dot"></span>
-                    AI-Powered · BPUT Ready · Free to Use
-                </div>
+        <!-- Subtext -->
+        <p class="hero-sub">
+          SHELFBOT combines an AI tutor, digital library, and study dashboard to help students learn faster and stay organized.
+        </p>
 
-                <h1 class="hero-heading" id="hero-heading">
-                    Your Smartest<br />
-                    <span class="gradient-text">Study Companion</span><br />
-                    is Here
-                </h1>
-
-                <p class="hero-sub" id="hero-sub">
-                    SHELFBOT combines an AI chatbot, a curated digital library, and a
-                    gamified progress tracker — all in one place. Access 10,000+ books,
-                    get tutored, and level up your academics.
-                </p>
-
-                <div class="hero-actions">
-                    <a href="index.html" class="hero-btn-primary" id="hero-cta-primary">
-                        🚀 Start Learning Free
-                    </a>
-                    <a href="#features" class="hero-btn-secondary" id="hero-cta-secondary">
-                        Explore Features ↓
-                    </a>
-                </div>
-
-                <div class="hero-stats">
-                    <div class="hero-stat"><strong>10,000+</strong> Books</div>
-                    <div class="hero-stat"><strong>500+</strong> Students</div>
-                    <div class="hero-stat"><strong>50+</strong> Subjects</div>
-                    <div class="hero-stat">⭐ <strong>4.9</strong> Rating</div>
-                </div>
-
-            </div>
+        <!-- CTAs -->
+        <div class="hero-actions">
+          <a href="index.html" class="hero-btn-primary" id="hero-start-btn">
+            Start Learning
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a href="#features" class="hero-btn-secondary" id="hero-explore-btn">
+            Explore Features
+          </a>
         </div>
-    </section>
 
-
-    <!-- ══════════════════════════════════════════════════════
-       FEATURES
-  ══════════════════════════════════════════════════════ -->
-    <section id="features" aria-label="Features section">
-        <div class="container">
-
-            <div class="text-center reveal" id="features-header">
-                <span class="section-label">✨ What We Offer</span>
-                <h2 class="section-title">
-                    Everything you need to<br />
-                    <span class="gradient-text">Study Smarter</span>
-                </h2>
-                <p class="section-sub">
-                    Six powerful tools designed specifically for engineering students —
-                    all powered by AI, all in one platform.
-                </p>
-            </div>
-
-            <div class="features-grid" id="features-grid">
-
-                <!-- Card 1 -->
-                <article class="feature-card feat-purple reveal" data-delay="0" id="feat-chat">
-                    <div class="feature-icon" aria-hidden="true">🤖</div>
-                    <h3 class="feature-title">AI Chat Bot</h3>
-                    <p class="feature-desc">
-                        Ask anything about your syllabus, get instant explanations, solve
-                        doubts, and get step-by-step solutions — 24/7, always available.
-                    </p>
-                    <span class="feature-tag">🟣 Powered by AI</span>
-                </article>
-
-                <!-- Card 2 -->
-                <article class="feature-card feat-blue reveal" data-delay="80" id="feat-library">
-                    <div class="feature-icon" aria-hidden="true">📚</div>
-                    <h3 class="feature-title">Smart Library</h3>
-                    <p class="feature-desc">
-                        Browse 10,000+ curated books organized by year, branch, and
-                        subject. Instant search, filters, and one-click reservations.
-                    </p>
-                    <span class="feature-tag">🔵 10,000+ Books</span>
-                </article>
-
-                <!-- Card 3 -->
-                <article class="feature-card feat-mint reveal" data-delay="160" id="feat-tracker">
-                    <div class="feature-icon" aria-hidden="true">📊</div>
-                    <h3 class="feature-title">Progress Tracker</h3>
-                    <p class="feature-desc">
-                        Track your reading and study sessions. Earn XP, level up your
-                        Scholar rank, and maintain streaks that keep you motivated.
-                    </p>
-                    <span class="feature-tag">🟢 Gamified Learning</span>
-                </article>
-
-                <!-- Card 4 -->
-                <article class="feature-card feat-amber reveal" data-delay="240" id="feat-voice">
-                    <div class="feature-icon" aria-hidden="true">🎙️</div>
-                    <h3 class="feature-title">Voice Assistant</h3>
-                    <p class="feature-desc">
-                        Hands-free learning! Speak your questions and listen to explanations.
-                        Perfect for revision while commuting or doing other tasks.
-                    </p>
-                    <span class="feature-tag">🟡 Voice Enabled</span>
-                </article>
-
-                <!-- Card 5 -->
-                <article class="feature-card feat-coral reveal" data-delay="320" id="feat-tutor">
-                    <div class="feature-icon" aria-hidden="true">🎓</div>
-                    <h3 class="feature-title">AI Study Tutor</h3>
-                    <p class="feature-desc">
-                        Take quizzes, get personalised study plans, and receive instant
-                        feedback on your performance with smart adaptive learning.
-                    </p>
-                    <span class="feature-tag">🔴 Adaptive Quizzes</span>
-                </article>
-
-                <!-- Card 6 -->
-                <article class="feature-card feat-teal reveal" data-delay="400" id="feat-achieve">
-                    <div class="feature-icon" aria-hidden="true">🏆</div>
-                    <h3 class="feature-title">Achievements</h3>
-                    <p class="feature-desc">
-                        Unlock badges, collect achievement points, and showcase your
-                        learning milestones. Learning is more fun when it feels like a game.
-                    </p>
-                    <span class="feature-tag">🏆 Earn Badges</span>
-                </article>
-
-            </div>
+        <!-- Trust badges -->
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <span class="stat-icon">📚</span>
+            <strong>10,000+</strong> books
+          </div>
+          <div class="hero-stat">
+            <span class="stat-icon">👨‍🎓</span>
+            <strong>500+</strong> students
+          </div>
+          <div class="hero-stat">
+            <span class="stat-icon">📘</span>
+            <strong>50+</strong> subjects
+          </div>
+          <div class="hero-stat">
+            <span class="stat-icon">⭐</span>
+            <strong>4.9</strong> rating
+          </div>
         </div>
-    </section>
 
+      </div>
+    </div>
+  </section>
 
-    <!-- ══════════════════════════════════════════════════════
-       STATS
-  ══════════════════════════════════════════════════════ -->
-    <section id="stats" aria-label="Statistics section">
-        <div class="container">
-            <div class="stats-inner reveal" id="stats-inner">
+  <!-- ══════════════════════════ FEATURES ══════════════════════════════════ -->
+  <section id="features" aria-label="Features">
+    <div class="container">
+      <div class="section-head text-center reveal">
+        <span class="section-label">✦ Platform Features</span>
+        <h2 class="section-title">Everything you need to<br><span class="gradient-text">excel academically</span></h2>
+        <p class="section-sub">SHELFBOT is purpose-built for engineering students — not a generic AI tool.</p>
+      </div>
 
-                <div class="stat-item" id="stat-books">
-                    <div class="stat-icon" aria-hidden="true">📚</div>
-                    <div class="stat-number gradient-text" data-target="10000" data-suffix="+" id="sn-books">0</div>
-                    <div class="stat-label">Books Available</div>
-                </div>
+      <div class="features-grid">
 
-                <div class="stat-item" id="stat-students">
-                    <div class="stat-icon" aria-hidden="true">👨‍🎓</div>
-                    <div class="stat-number gradient-text" data-target="500" data-suffix="+" id="sn-students">0</div>
-                    <div class="stat-label">Students Enrolled</div>
-                </div>
-
-                <div class="stat-item" id="stat-subjects">
-                    <div class="stat-icon" aria-hidden="true">🔬</div>
-                    <div class="stat-number gradient-text" data-target="50" data-suffix="+" id="sn-subjects">0</div>
-                    <div class="stat-label">Subjects Covered</div>
-                </div>
-
-                <div class="stat-item" id="stat-rating">
-                    <div class="stat-icon" aria-hidden="true">⭐</div>
-                    <div class="stat-number gradient-text" data-target="4.9" data-decimals="1" id="sn-rating">0.0</div>
-                    <div class="stat-label">Average Rating</div>
-                </div>
-
-            </div>
+        <div class="feature-card feat-purple reveal">
+          <div class="feature-icon">🤖</div>
+          <h3 class="feature-title">AI Academic Assistant</h3>
+          <p class="feature-desc">Ask your study assistant anything about your syllabus, subjects, or textbooks. Powered by a context-aware AI trained on BPUT curriculum.</p>
+          <span class="feature-tag">Core Feature</span>
         </div>
-    </section>
 
-
-    <!-- ══════════════════════════════════════════════════════
-       HOW IT WORKS
-  ══════════════════════════════════════════════════════ -->
-    <section id="how-it-works" aria-label="How it works section">
-        <div class="container">
-
-            <div class="text-center reveal" id="hiw-header">
-                <span class="section-label">🗺️ The Journey</span>
-                <h2 class="section-title">
-                    Up and running in<br />
-                    <span class="gradient-text">3 Simple Steps</span>
-                </h2>
-                <p class="section-sub">
-                    No complicated setup. No textbook hunting. Just sign up and start
-                    studying smarter in minutes.
-                </p>
-            </div>
-
-            <div class="steps-grid" id="steps-grid">
-
-                <div class="step-card reveal" data-delay="0" id="step-1">
-                    <div class="step-number" aria-hidden="true">1</div>
-                    <div class="step-icon" aria-hidden="true">📝</div>
-                    <h3 class="step-title">Create Your Account</h3>
-                    <p class="step-desc">
-                        Sign up for free in 30 seconds. Pick your branch, year, and
-                        learning goals — SHELFBOT personalises itself for you.
-                    </p>
-                </div>
-
-                <div class="step-card reveal" data-delay="150" id="step-2">
-                    <div class="step-number" aria-hidden="true">2</div>
-                    <div class="step-icon" aria-hidden="true">🔍</div>
-                    <h3 class="step-title">Explore the Library</h3>
-                    <p class="step-desc">
-                        Browse thousands of subject-specific books, ask the AI chatbot
-                        anything, and get concept explanations instantly.
-                    </p>
-                </div>
-
-                <div class="step-card reveal" data-delay="300" id="step-3">
-                    <div class="step-number" aria-hidden="true">3</div>
-                    <div class="step-icon" aria-hidden="true">🚀</div>
-                    <h3 class="step-title">Learn & Level Up</h3>
-                    <p class="step-desc">
-                        Take quizzes, earn XP, unlock achievements, and watch your
-                        Scholar rank rise as you master your subjects.
-                    </p>
-                </div>
-
-            </div>
+        <div class="feature-card feat-green reveal">
+          <div class="feature-icon">📚</div>
+          <h3 class="feature-title">Digital Library</h3>
+          <p class="feature-desc">Search the library catalog across all branches and years. Reserve books, check availability, and filter by subject with one click.</p>
+          <span class="feature-tag">10,000+ Books</span>
         </div>
-    </section>
 
-
-    <!-- ══════════════════════════════════════════════════════
-       ABOUT
-  ══════════════════════════════════════════════════════ -->
-    <section id="about" aria-label="About SHELFBOT">
-        <div class="container">
-
-            <div class="about-grid">
-                <div class="about-text reveal" id="about-text">
-                    <span class="section-label">📖 Our Mission</span>
-                    <h2 class="section-title">
-                        Built for <span class="gradient-text">Indian Engineering</span><br />
-                        Students
-                    </h2>
-                    <p class="section-sub">
-                        SHELFBOT was built specifically for BPUT and similar universities —
-                        with the right books, the right syllabus, and the smartest AI tutor
-                        to help you ace your exams.
-                    </p>
-                    <ul class="about-list" id="about-list">
-                        <li class="about-item">
-                            <span class="about-item-dot">✓</span>
-                            <span>Curated BPUT-aligned book database for all branches and years</span>
-                        </li>
-                        <li class="about-item">
-                            <span class="about-item-dot">✓</span>
-                            <span>AI chatbot trained on engineering concepts and problem solving</span>
-                        </li>
-                        <li class="about-item">
-                            <span class="about-item-dot">✓</span>
-                            <span>Gamification keeps you consistent and motivated daily</span>
-                        </li>
-                        <li class="about-item">
-                            <span class="about-item-dot">✓</span>
-                            <span>Voice assistant for hands-free learning anytime, anywhere</span>
-                        </li>
-                        <li class="about-item">
-                            <span class="about-item-dot">✓</span>
-                            <span>100% free — built by students, for students</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="about-visual reveal" data-delay="100" id="about-visual">
-                    <div class="about-card" id="ac-1">
-                        <div class="about-card-icon" aria-hidden="true">🎯</div>
-                        <div>
-                            <div class="about-card-title">Smart Study Plans</div>
-                            <div class="about-card-sub">AI generates personalised plans based on your weak areas</div>
-                        </div>
-                    </div>
-                    <div class="about-card" id="ac-2">
-                        <div class="about-card-icon" aria-hidden="true">🏅</div>
-                        <div>
-                            <div class="about-card-title">Achievement System</div>
-                            <div class="about-card-sub">50+ badges to unlock as you hit study milestones</div>
-                        </div>
-                    </div>
-                    <div class="about-card" id="ac-3">
-                        <div class="about-card-icon" aria-hidden="true">⚡</div>
-                        <div>
-                            <div class="about-card-title">Instant Answers</div>
-                            <div class="about-card-sub">Ask anything, get answers in seconds — no waiting</div>
-                        </div>
-                    </div>
-                    <div class="about-card" id="ac-4">
-                        <div class="about-card-icon" aria-hidden="true">📱</div>
-                        <div>
-                            <div class="about-card-title">Works Everywhere</div>
-                            <div class="about-card-sub">Fully responsive — use it on phone, tablet, or laptop</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+        <div class="feature-card feat-amber reveal">
+          <div class="feature-icon">📊</div>
+          <h3 class="feature-title">Study Dashboard</h3>
+          <p class="feature-desc">Track your study hours, quiz accuracy, scholar rank, and XP progress. See what to focus on next with personalised recommendations.</p>
+          <span class="feature-tag">Gamified</span>
         </div>
-    </section>
 
-
-    <!-- ══════════════════════════════════════════════════════
-       TESTIMONIALS
-  ══════════════════════════════════════════════════════ -->
-    <section id="testimonials" aria-label="Student testimonials">
-        <div class="container">
-
-            <div class="text-center reveal" id="testi-header">
-                <span class="section-label">💬 Student Stories</span>
-                <h2 class="section-title">
-                    Loved by<br />
-                    <span class="gradient-text">Real Students</span>
-                </h2>
-                <p class="section-sub">
-                    Don't just take our word for it — hear from students who use
-                    SHELFBOT every day to study smarter.
-                </p>
-            </div>
-
-            <div class="testimonials-grid" id="testi-grid">
-
-                <article class="testi-card reveal" data-delay="0" id="testi-1">
-                    <div class="testi-stars" aria-label="5 stars">⭐⭐⭐⭐⭐</div>
-                    <p class="testi-quote">
-                        SHELFBOT's AI chatbot saved my semester. I was stuck on Data Structures
-                        for weeks — one conversation and everything clicked. The library search
-                        is insanely fast too!
-                    </p>
-                    <div class="testi-author">
-                        <div class="testi-avatar" aria-hidden="true">👨‍💻</div>
-                        <div>
-                            <div class="testi-name">Arjun Panda</div>
-                            <div class="testi-role">CSE 3rd Year · BPUT</div>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="testi-card reveal" data-delay="120" id="testi-2">
-                    <div class="testi-stars" aria-label="5 stars">⭐⭐⭐⭐⭐</div>
-                    <p class="testi-quote">
-                        The gamification is genius. I went from studying 30 minutes a day to
-                        3 hours just because I wanted to level up my Scholar rank. My GPA
-                        improved by a full grade this semester!
-                    </p>
-                    <div class="testi-author">
-                        <div class="testi-avatar" aria-hidden="true">👩‍🔬</div>
-                        <div>
-                            <div class="testi-name">Priya Das</div>
-                            <div class="testi-role">ECE 2nd Year · BPUT</div>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="testi-card reveal" data-delay="240" id="testi-3">
-                    <div class="testi-stars" aria-label="4 stars">⭐⭐⭐⭐⭐</div>
-                    <p class="testi-quote">
-                        Having all BPUT books in one searchable place is a dream. I used to
-                        search for reference books for hours — now I find exactly what I need
-                        in 10 seconds. Absolute game changer.
-                    </p>
-                    <div class="testi-author">
-                        <div class="testi-avatar" aria-hidden="true">👨‍🎓</div>
-                        <div>
-                            <div class="testi-name">Rahul Behera</div>
-                            <div class="testi-role">MECH 4th Year · BPUT</div>
-                        </div>
-                    </div>
-                </article>
-
-            </div>
+        <div class="feature-card feat-sky reveal">
+          <div class="feature-icon">🎙️</div>
+          <h3 class="feature-title">Voice Tutor</h3>
+          <p class="feature-desc">Tired of reading? Switch to voice mode and have a natural spoken conversation with your AI tutor. Hands-free studying made real.</p>
+          <span class="feature-tag">Voice Enabled</span>
         </div>
-    </section>
 
-
-    <!-- ══════════════════════════════════════════════════════
-       CTA BANNER
-  ══════════════════════════════════════════════════════ -->
-    <section id="cta" aria-label="Call to action">
-        <div class="container">
-            <div class="cta-inner reveal" id="cta-inner">
-                <h2 class="cta-title">
-                    Ready to Study<br />
-                    <span style="color:rgba(255,255,255,0.85);">10× Smarter?</span>
-                </h2>
-                <p class="cta-sub">
-                    Join hundreds of BPUT students already using SHELFBOT.
-                    Free forever — no credit card needed.
-                </p>
-                <div class="cta-actions">
-                    <a href="index.html" class="cta-btn-primary" id="cta-main-btn">
-                        🚀 Create Free Account
-                    </a>
-                    <a href="#contact" class="cta-btn-secondary" id="cta-contact-btn">
-                        📬 Get in Touch
-                    </a>
-                </div>
-            </div>
+        <div class="feature-card feat-coral reveal">
+          <div class="feature-icon">🏆</div>
+          <h3 class="feature-title">Gamified Progress</h3>
+          <p class="feature-desc">Earn XP, unlock Scholar levels, and collect achievement badges as you complete your study goals. Continue your study streak every day.</p>
+          <span class="feature-tag">Levels + Badges</span>
         </div>
-    </section>
 
-
-    <!-- ══════════════════════════════════════════════════════
-       CONTACT
-  ══════════════════════════════════════════════════════ -->
-    <section id="contact" aria-label="Contact section">
-        <div class="container">
-
-            <div class="text-center reveal" id="contact-header">
-                <span class="section-label">📬 Get in Touch</span>
-                <h2 class="section-title">
-                    We'd love to<br />
-                    <span class="gradient-text">Hear From You</span>
-                </h2>
-                <p class="section-sub">
-                    Questions, feedback, or feature requests? Drop us a message
-                    and we'll get back to you within 24 hours.
-                </p>
-            </div>
-
-            <div class="contact-grid" id="contact-grid">
-
-                <!-- Info -->
-                <div class="contact-info reveal" id="contact-info">
-                    <h3 class="contact-info-title">Contact Information</h3>
-                    <p class="contact-info-sub">
-                        SHELFBOT is built by students, for students. We genuinely
-                        read every message — your feedback shapes the product.
-                    </p>
-                    <div class="contact-detail" id="cd-email">
-                        <div class="contact-detail-icon" aria-hidden="true">📧</div>
-                        <span>shelfbot@bput.ac.in</span>
-                    </div>
-                    <div class="contact-detail" id="cd-location">
-                        <div class="contact-detail-icon" aria-hidden="true">📍</div>
-                        <span>BPUT Campus, Rourkela, Odisha</span>
-                    </div>
-                    <div class="contact-detail" id="cd-response">
-                        <div class="contact-detail-icon" aria-hidden="true">⏱️</div>
-                        <span>Response within 24 hours</span>
-                    </div>
-                    <div class="contact-detail" id="cd-hours">
-                        <div class="contact-detail-icon" aria-hidden="true">🕘</div>
-                        <span>Mon–Sat, 9 AM – 6 PM IST</span>
-                    </div>
-                </div>
-
-                <!-- Form -->
-                <div class="contact-form reveal" data-delay="100" id="contact-form-wrapper">
-                    <form id="contact-form" novalidate>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label" for="cf-name">Name</label>
-                                <input type="text" id="cf-name" class="form-input" placeholder="Your name" required />
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="cf-email">Email</label>
-                                <input type="email" id="cf-email" class="form-input" placeholder="your@email.com"
-                                    required />
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="cf-subject">Subject</label>
-                            <input type="text" id="cf-subject" class="form-input" placeholder="How can we help?"
-                                required />
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="cf-message">Message</label>
-                            <textarea id="cf-message" class="form-textarea" placeholder="Tell us more..."
-                                required></textarea>
-                        </div>
-                        <button type="submit" class="form-submit" id="form-submit-btn">
-                            Send Message →
-                        </button>
-                    </form>
-                    <div class="form-success" id="form-success">
-                        ✅ Message sent! We'll get back to you within 24 hours. 🎉
-                    </div>
-                </div>
-
-            </div>
+        <div class="feature-card feat-purple reveal">
+          <div class="feature-icon">🧪</div>
+          <h3 class="feature-title">Practice & Quizzes</h3>
+          <p class="feature-desc">Sharpen your exam readiness with AI-generated practice questions tailored to your branch, year, and subject. Instant feedback included.</p>
+          <span class="feature-tag">Coming Soon</span>
         </div>
-    </section>
 
+      </div>
+    </div>
+  </section>
 
-    <!-- ══════════════════════════════════════════════════════
-       FOOTER
-  ══════════════════════════════════════════════════════ -->
-    <footer id="footer" role="contentinfo">
-        <div class="container">
-
-            <div class="footer-top">
-
-                <!-- Brand column -->
-                <div class="footer-col" id="footer-brand">
-                    <div class="footer-brand-text">
-                        <img src="logo.jpg" alt="SHELFBOT logo"
-                            style="width:28px;height:28px;border-radius:6px;object-fit:cover;" />
-                        SHELFBOT
-                    </div>
-                    <p class="footer-desc">
-                        AI-powered library and study companion built for engineering
-                        students. Learn smarter, not harder.
-                    </p>
-                    <div class="footer-socials" aria-label="Social media links">
-                        <a href="#" class="social-btn" id="social-github" aria-label="GitHub">🐙</a>
-                        <a href="#" class="social-btn" id="social-twitter" aria-label="Twitter">🐦</a>
-                        <a href="#" class="social-btn" id="social-linkedin" aria-label="LinkedIn">💼</a>
-                        <a href="#" class="social-btn" id="social-instagram" aria-label="Instagram">📸</a>
-                    </div>
-                </div>
-
-                <!-- Product column -->
-                <div class="footer-col" id="footer-product">
-                    <h4 class="footer-col-title">Product</h4>
-                    <ul class="footer-links" role="list">
-                        <li><a href="#features" class="footer-link">Features</a></li>
-                        <li><a href="#how-it-works" class="footer-link">How It Works</a></li>
-                        <li><a href="#stats" class="footer-link">Our Numbers</a></li>
-                        <li><a href="index.html" class="footer-link">Launch App →</a></li>
-                    </ul>
-                </div>
-
-                <!-- Resources column -->
-                <div class="footer-col" id="footer-resources">
-                    <h4 class="footer-col-title">Resources</h4>
-                    <ul class="footer-links" role="list">
-                        <li><a href="#" class="footer-link">Documentation</a></li>
-                        <li><a href="#" class="footer-link">API Reference</a></li>
-                        <li><a href="#" class="footer-link">Book Catalogue</a></li>
-                        <li><a href="#contact" class="footer-link">Support</a></li>
-                    </ul>
-                </div>
-
-                <!-- Legal column -->
-                <div class="footer-col" id="footer-legal">
-                    <h4 class="footer-col-title">Legal</h4>
-                    <ul class="footer-links" role="list">
-                        <li><a href="#" class="footer-link">Privacy Policy</a></li>
-                        <li><a href="#" class="footer-link">Terms of Service</a></li>
-                        <li><a href="#" class="footer-link">Cookie Policy</a></li>
-                        <li><a href="#about" class="footer-link">About Us</a></li>
-                    </ul>
-                </div>
-
-            </div>
-
-            <div class="footer-bottom">
-                <p class="footer-copy">
-                    © 2026 <span>SHELFBOT</span>. Made with ❤️ for engineering students.
-                </p>
-                <div class="footer-badges">
-                    <span class="footer-badge">✅ Free Forever</span>
-                    <span class="footer-badge">🔒 Privacy First</span>
-                    <span class="footer-badge">🤖 AI Powered</span>
-                </div>
-            </div>
-
+  <!-- ══════════════════════ STATS BANNER ═══════════════════════════════════ -->
+  <section id="stats" aria-label="Platform statistics">
+    <div class="container">
+      <div class="stats-band reveal">
+        <div class="stat-pill">
+          <span class="sp-num">10,000+</span>
+          <span class="sp-label">Books in Library</span>
         </div>
-    </footer>
+        <div class="stat-divider"></div>
+        <div class="stat-pill">
+          <span class="sp-num">500+</span>
+          <span class="sp-label">Active Students</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-pill">
+          <span class="sp-num">50+</span>
+          <span class="sp-label">Engineering Subjects</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-pill">
+          <span class="sp-num">4.9 ★</span>
+          <span class="sp-label">Student Rating</span>
+        </div>
+      </div>
+    </div>
+  </section>
 
+  <!-- ══════════════════════ HOW IT WORKS ═══════════════════════════════════ -->
+  <section id="how-it-works" aria-label="How it works">
+    <div class="container">
+      <div class="section-head text-center reveal">
+        <span class="section-label">🗺️ Process</span>
+        <h2 class="section-title">Up and running in<br><span class="gradient-text">three simple steps</span></h2>
+        <p class="section-sub">No complicated setup. Just register, start studying, and watch your progress grow.</p>
+      </div>
 
-    <!-- Scripts -->
-    <script src="js/homepage.js"></script>
+      <div class="steps-grid">
+        <div class="step-card reveal">
+          <div class="step-num">01</div>
+          <div class="step-icon">✍️</div>
+          <h3 class="step-title">Register Your Profile</h3>
+          <p class="step-desc">Create your account, select your branch and year. SHELFBOT personalises the entire experience based on your curriculum.</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card reveal">
+          <div class="step-num">02</div>
+          <div class="step-icon">📖</div>
+          <h3 class="step-title">Study &amp; Explore</h3>
+          <p class="step-desc">Search the library catalog, chat with your AI tutor, complete quizzes, and track your study hours — all in one place.</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card reveal">
+          <div class="step-num">03</div>
+          <div class="step-icon">🏆</div>
+          <h3 class="step-title">Level Up</h3>
+          <p class="step-desc">Earn XP with every study session. Unlock Scholar, Expert, and Master levels. Build your streak and stay consistent.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════ ABOUT ══════════════════════════════════════ -->
+  <section id="about" aria-label="About SHELFBOT">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-text reveal">
+          <span class="section-label">📖 About</span>
+          <h2 class="section-title">Built for Indian<br><span class="gradient-text">engineering students</span></h2>
+          <p class="about-desc">SHELFBOT was designed specifically for Biju Patnaik University of Technology students. Unlike generic AI tools, it understands BPUT's curriculum structure, branches, and subject requirements.</p>
+          <p class="about-desc">Whether you're in CSE, Mechanical, Electrical, Civil, or ECE — SHELFBOT's library is organised by your branch, year, and semester. Your AI tutor knows your syllabus.</p>
+          <div class="about-tags">
+            <span class="atag">💻 CSE</span>
+            <span class="atag">⚙️ Mechanical</span>
+            <span class="atag">⚡ Electrical</span>
+            <span class="atag">🏗️ Civil</span>
+            <span class="atag">📡 ECE</span>
+          </div>
+        </div>
+        <div class="about-visual reveal">
+          <div class="visual-card">
+            <div class="vc-header">
+              <div class="vc-dots">
+                <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
+              </div>
+              <span class="vc-title">SHELFBOT Library</span>
+            </div>
+            <div class="vc-row head">
+              <span>Title</span><span>Branch</span><span>Copies</span><span>Action</span>
+            </div>
+            <div class="vc-row">
+              <span>Intro to Algorithms</span>
+              <span class="tag-cs">CSE</span>
+              <span class="tag-ok">✅ 7/10</span>
+              <span class="tag-btn">Reserve</span>
+            </div>
+            <div class="vc-row">
+              <span>Machine Design</span>
+              <span class="tag-me">Mech</span>
+              <span class="tag-ok">✅ 4/8</span>
+              <span class="tag-btn">Reserve</span>
+            </div>
+            <div class="vc-row">
+              <span>Power Systems</span>
+              <span class="tag-ee">EE</span>
+              <span class="tag-out">⏳ 0/6</span>
+              <span class="tag-btn-off">Issued</span>
+            </div>
+            <div class="vc-row">
+              <span>Structural Analysis</span>
+              <span class="tag-cv">Civil</span>
+              <span class="tag-ok">✅ 5/9</span>
+              <span class="tag-btn">Reserve</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════ CONTACT ════════════════════════════════════ -->
+  <section id="contact" aria-label="Contact">
+    <div class="container">
+      <div class="contact-wrap reveal">
+        <div class="contact-text">
+          <span class="section-label">📬 Contact</span>
+          <h2 class="section-title">Have questions?<br><span class="gradient-text">We're here to help</span></h2>
+          <p class="about-desc">Reach out with feedback, feature requests, or access issues. We respond within 24 hours.</p>
+          <div class="contact-info">
+            <div class="ci-row">📧 <span>support@shelfbot.edu</span></div>
+            <div class="ci-row">🏫 <span>BPUT Campus, Rourkela, Odisha</span></div>
+          </div>
+        </div>
+        <div class="contact-cta">
+          <div class="cta-card">
+            <h3>Ready to start?</h3>
+            <p>Join 500+ students already using SHELFBOT to level up their academics.</p>
+            <a href="index.html" class="hero-btn-primary" id="contact-cta-btn">
+              Get Started Free
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════ FOOTER ═════════════════════════════════════ -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <a href="homepage.html" class="nav-logo">
+            <div class="nav-logo-icon">
+              <img src="logo.jpg" alt="SHELFBOT" />
+            </div>
+            <span class="nav-logo-text">SHELF<span>BOT</span></span>
+          </a>
+          <p class="footer-tagline">AI-Powered Library &amp; Study Companion<br>for BPUT Engineering Students.</p>
+        </div>
+        <div class="footer-links-group">
+          <h4>Platform</h4>
+          <a href="#features">Features</a>
+          <a href="#how-it-works">How It Works</a>
+          <a href="index.html">Dashboard</a>
+          <a href="library.html">Library</a>
+        </div>
+        <div class="footer-links-group">
+          <h4>Resources</h4>
+          <a href="#about">About</a>
+          <a href="#contact">Contact</a>
+          <a href="index.html">Login</a>
+          <a href="index.html">Register</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 SHELFBOT. Built for students, by students.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ══════════════════════════ SCRIPTS ════════════════════════════════════ -->
+  <script>
+    // ── Navbar scroll effect ──
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 30);
+    }, { passive: true });
+
+    // ── Active nav link on scroll ──
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          navLinks.forEach(l => l.classList.remove('active'));
+          const active = document.querySelector(`.nav-link[href="#${e.target.id}"]`);
+          if (active) active.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-40% 0px -50% 0px' });
+    sections.forEach(s => observer.observe(s));
+
+    // ── Mobile hamburger ──
+    const hamburger = document.getElementById('nav-hamburger');
+    const mobileMenu = document.getElementById('nav-mobile');
+    hamburger.addEventListener('click', () => {
+      const open = mobileMenu.classList.toggle('open');
+      hamburger.classList.toggle('open', open);
+      mobileMenu.style.display = open ? 'flex' : 'none';
+      hamburger.setAttribute('aria-expanded', String(open));
+    });
+    mobileMenu.querySelectorAll('.mobile-link').forEach(l => {
+      l.addEventListener('click', () => {
+        mobileMenu.classList.remove('open');
+        hamburger.classList.remove('open');
+        mobileMenu.style.display = 'none';
+        hamburger.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    // ── Scroll reveal ──
+    const revealObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('revealed'); revealObs.unobserve(e.target); }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+  </script>
 
 </body>
-
 </html>

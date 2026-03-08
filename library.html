@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Library Browse — SHELFBOT</title>
+  <meta name="description"
+    content="Browse and search BPUT engineering books by title, author, subject, and department. Free digital library for BTech students." />
+  <meta name="keywords" content="BPUT library, engineering books, BTech books, SHELFBOT, library search" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/library.css" />
+</head>
+
+<body>
+
+  <!-- ══════════════════════════════════════════════════════
+     NAVBAR
+  ══════════════════════════════════════════════════════ -->
+  <nav id="lib-navbar" class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+
+      <!-- Logo -->
+      <a href="homepage.html" class="nav-logo" aria-label="SHELFBOT Home">
+        <img src="logo.jpg" alt="SHELFBOT logo" />
+        <span class="nav-logo-text">SHELF<span>BOT</span></span>
+      </a>
+
+      <!-- Desktop links -->
+      <ul class="nav-links" role="list">
+        <li><a href="homepage.html"   class="nav-link"         id="nl-home">Home</a></li>
+        <li><a href="library.html"    class="nav-link active"  id="nl-library">Library</a></li>
+        <li><a href="index.html#chat" class="nav-link"         id="nl-chatbot">Chatbot</a></li>
+        <li><a href="homepage.html#about" class="nav-link"     id="nl-about">About</a></li>
+      </ul>
+
+      <!-- Desktop actions -->
+      <div class="nav-actions">
+        <a href="index.html" class="nav-btn-ghost"   id="nav-login-btn">Login</a>
+        <a href="index.html" class="nav-btn-primary" id="nav-start-btn">Get Started →</a>
+      </div>
+
+      <!-- Hamburger (mobile) -->
+      <button class="nav-hamburger" id="lib-hamburger" aria-label="Toggle menu" aria-expanded="false">
+        <span class="ham-line"></span>
+        <span class="ham-line"></span>
+        <span class="ham-line"></span>
+      </button>
+
+    </div>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div class="nav-mobile" id="lib-nav-mobile" role="dialog" aria-modal="false">
+    <a href="homepage.html"      class="mob-link" id="ml-home">🏠 Home</a>
+    <a href="library.html"       class="mob-link" id="ml-library">📚 Library</a>
+    <a href="index.html#chat"    class="mob-link" id="ml-chatbot">🤖 Chatbot</a>
+    <a href="homepage.html#about" class="mob-link" id="ml-about">📖 About</a>
+    <div class="mob-divider"></div>
+    <div class="mob-actions">
+      <a href="index.html" class="nav-btn-ghost"   id="mob-login">Login</a>
+      <a href="index.html" class="nav-btn-primary" id="mob-start">Get Started →</a>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════
+     PAGE WRAPPER
+  ══════════════════════════════════════════════════════ -->
+  <main class="page-wrap">
+
+    <!-- ── Page Header ─────────────────────────────────────────────────────── -->
+    <div class="lib-header">
+      <div class="lib-header-top">
+        <div>
+          <h1 class="lib-title">📚 <span>Book Catalogue</span></h1>
+          <p class="lib-sub">Browse all books for BPUT Engineering students — Computer Science, Mechanical, Electrical &amp; Civil</p>
+        </div>
+      </div>
+
+      <!-- Quick stats row -->
+      <div class="stats-row">
+        <span class="stat-chip blue"  id="stat-total">— Books</span>
+        <span class="stat-chip green" id="stat-depts">— Departments</span>
+        <span class="stat-chip orange" id="stat-subjs">— Subjects</span>
+      </div>
+    </div>
+
+
+    <!-- ── Search Bar ───────────────────────────────────────────────────────── -->
+    <div class="search-section">
+      <div class="search-wrap">
+        <span class="search-icon" aria-hidden="true">🔍</span>
+        <input
+          type="search"
+          id="lib-search"
+          class="search-input"
+          placeholder="Search by title, author, subject or department…"
+          autocomplete="off"
+          aria-label="Search books"
+          oninput="handleSearch(this.value)"
+        />
+        <button
+          class="search-clear-btn"
+          id="search-clear-btn"
+          aria-label="Clear search"
+          onclick="document.getElementById('lib-search').value=''; handleSearch('');"
+        >✕</button>
+      </div>
+    </div>
+
+
+    <!-- ── Filters ──────────────────────────────────────────────────────────── -->
+    <div class="filters-section" role="group" aria-label="Book filters">
+
+      <!-- Branch filter chips -->
+      <div class="filter-group">
+        <span class="filter-label">🏛️ Department</span>
+        <div class="branch-chips" id="branch-chips" role="group" aria-label="Filter by department">
+          <button class="branch-chip active" onclick="setBranch('', this)" aria-pressed="true">All</button>
+          <button class="branch-chip" onclick="setBranch('Computer Science', this)" aria-pressed="false">💻 CS</button>
+          <button class="branch-chip" onclick="setBranch('Mechanical', this)"       aria-pressed="false">⚙️ Mech</button>
+          <button class="branch-chip" onclick="setBranch('Electrical', this)"       aria-pressed="false">⚡ EE</button>
+          <button class="branch-chip" onclick="setBranch('Civil', this)"            aria-pressed="false">🏗️ Civil</button>
+        </div>
+      </div>
+
+      <!-- Subject dropdown (dynamically populated) -->
+      <div class="filter-group">
+        <label class="filter-label" for="subject-select">📘 Subject</label>
+        <select class="filter-select" id="subject-select" aria-label="Filter by subject">
+          <option value="">All Subjects</option>
+        </select>
+      </div>
+
+      <!-- Sort by dropdown -->
+      <div class="filter-group">
+        <label class="filter-label" for="sort-select">⬆⬇ Sort By</label>
+        <select class="filter-select" id="sort-select" aria-label="Sort books" onchange="handleSortDropdown(this.value)">
+          <option value="">— Default —</option>
+          <option value="title-asc">Title A→Z</option>
+          <option value="title-desc">Title Z→A</option>
+          <option value="author-asc">Author A→Z</option>
+          <option value="author-desc">Author Z→A</option>
+          <option value="year-asc">Year (Oldest)</option>
+          <option value="year-desc">Year (Newest)</option>
+        </select>
+      </div>
+
+      <!-- Clear filters -->
+      <div class="filter-group" style="justify-content:flex-end;">
+        <button class="btn-clear-filters" id="btn-clear-filters" onclick="clearFilters()" aria-label="Clear all filters">
+          ✕ Clear Filters
+        </button>
+      </div>
+
+    </div>
+
+
+    <!-- ── Results Meta ─────────────────────────────────────────────────────── -->
+    <div class="results-meta">
+      <p class="result-count" id="result-count" aria-live="polite">Loading books…</p>
+
+      <!-- Page size selector -->
+      <div style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--text-2);">
+        <label for="page-size-select">Rows per page:</label>
+        <select class="page-size-select" id="page-size-select" onchange="handlePageSizeChange(this.value)" aria-label="Rows per page">
+          <option value="5">5</option>
+          <option value="10" selected>10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+        </select>
+      </div>
+    </div>
+
+
+    <!-- ── Books Table ──────────────────────────────────────────────────────── -->
+    <div class="table-wrapper" role="region" aria-label="Books table">
+      <table class="books-table" id="books-table" aria-label="Library book catalogue">
+        <thead>
+          <tr>
+            <th scope="col">Book ID</th>
+            <th scope="col">
+              <button class="sort-btn" data-field="title" onclick="toggleSort('title')" aria-label="Sort by title">
+                Title
+              </button>
+            </th>
+            <th scope="col">
+              <button class="sort-btn" data-field="author" onclick="toggleSort('author')" aria-label="Sort by author">
+                Author
+              </button>
+            </th>
+            <th scope="col">
+              <button class="sort-btn" data-field="year" onclick="toggleSort('year')" aria-label="Sort by year">
+                Year
+              </button>
+            </th>
+            <th scope="col">Department</th>
+            <th scope="col">Subject</th>
+          </tr>
+        </thead>
+        <tbody id="books-tbody">
+          <!-- Rows injected by library-browse.js -->
+        </tbody>
+      </table>
+
+      <!-- ── Pagination ─────────────────────────────────────────────────────── -->
+      <div class="pagination" id="pagination-controls" role="navigation" aria-label="Page navigation">
+        <span class="page-info" id="page-info">Page 1 of 1</span>
+
+        <div class="page-controls">
+          <button class="page-btn nav-prev" id="btn-prev" onclick="goToPage(currentPage - 1)" aria-label="Previous page">‹</button>
+          <div id="page-nums" style="display:flex;gap:5px;"><!-- injected --></div>
+          <button class="page-btn nav-next" id="btn-next" onclick="goToPage(currentPage + 1)" aria-label="Next page">›</button>
+        </div>
+      </div>
+    </div><!-- /table-wrapper -->
+
+  </main><!-- /page-wrap -->
+
+
+  <!-- ── Script ────────────────────────────────────────────────────────────── -->
+  <script src="js/library-browse.js"></script>
+
+  <!--
+    Bridge: handle the sort dropdown so it maps to the same toggleSort()
+    system used by column header buttons.
+  -->
+  <script>
+    function handleSortDropdown(val) {
+      if (!val) {
+        // Reset sort
+        sortField = null;
+        sortDir = 'asc';
+        updateSortHeaders();
+        applyFiltersAndRender();
+        return;
+      }
+      const [field, dir] = val.split('-');
+      sortField = field;
+      sortDir   = dir;
+      updateSortHeaders();
+      applyFiltersAndRender();
+    }
+  </script>
+
+</body>
+
+</html>

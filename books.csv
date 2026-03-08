@@ -1,0 +1,66 @@
+BookID,Title,Author,Year,Department,Subject
+CS001,Introduction to Algorithms,Thomas H. Cormen,2009,Computer Science,Algorithms
+CS002,Data Structures and Algorithm Analysis in C,Mark Allen Weiss,2012,Computer Science,Data Structures
+CS003,Operating System Concepts,Abraham Silberschatz,2018,Computer Science,Operating Systems
+CS004,Artificial Intelligence: A Modern Approach,Stuart Russell,2020,Computer Science,Artificial Intelligence
+CS005,Computer Networks,Andrew S. Tanenbaum,2011,Computer Science,Computer Networks
+CS006,Database System Concepts,Abraham Silberschatz,2019,Computer Science,Database Management
+CS007,Computer Organization and Architecture,William Stallings,2016,Computer Science,Computer Architecture
+CS008,Compiler Design,Alfred V. Aho,2006,Computer Science,Compiler Design
+CS009,Software Engineering,Ian Sommerville,2015,Computer Science,Software Engineering
+CS010,Design Patterns: Elements of Reusable Object‑Oriented Software,Erich Gamma,1994,Computer Science,Software Engineering
+CS011,The C Programming Language,Brian W. Kernighan,1988,Computer Science,Programming Languages
+CS012,Java: The Complete Reference,Herbert Schildt,2021,Computer Science,Programming Languages
+CS013,Python Crash Course,Eric Matthes,2019,Computer Science,Programming Languages
+CS014,Machine Learning: A Probabilistic Perspective,Kevin P. Murphy,2012,Computer Science,Artificial Intelligence
+CS015,Deep Learning,Ian Goodfellow,2016,Computer Science,Artificial Intelligence
+CS016,Computer Graphics: Principles and Practice,John F. Hughes,2013,Computer Science,Computer Graphics
+CS017,Theory of Computation,Michael Sipser,2012,Computer Science,Theory of Computation
+CS018,Discrete Mathematics and Its Applications,Kenneth H. Rosen,2018,Computer Science,Discrete Mathematics
+CS019,Digital Logic and Computer Design,Morris Mano,2017,Computer Science,Digital Electronics
+CS020,Cloud Computing: Concepts Technology and Architecture,Thomas Erl,2013,Computer Science,Cloud Computing
+ME001,Engineering Thermodynamics,P.K. Nag,2013,Mechanical,Thermodynamics
+ME002,Fluid Mechanics,Frank M. White,2016,Mechanical,Fluid Mechanics
+ME003,Machine Design,V.B. Bhandari,2014,Mechanical,Machine Design
+ME004,Strength of Materials,R.K. Bansal,2016,Mechanical,Strength of Materials
+ME005,Theory of Machines,S.S. Rattan,2009,Mechanical,Theory of Machines
+ME006,Heat Transfer,J.P. Holman,2010,Mechanical,Heat Transfer
+ME007,Manufacturing Engineering and Technology,Kalpakjian,2013,Mechanical,Manufacturing Engineering
+ME008,Engineering Mechanics: Statics and Dynamics,R.C. Hibbeler,2016,Mechanical,Engineering Mechanics
+ME009,Refrigeration and Air Conditioning,C.P. Arora,2009,Mechanical,HVAC
+ME010,Industrial Engineering and Management,O.P. Khanna,2012,Mechanical,Industrial Engineering
+ME011,Finite Element Method,O.C. Zienkiewicz,2005,Mechanical,FEM Analysis
+ME012,Turbomachinery,B.K. Venkanna,2009,Mechanical,Fluid Mechanics
+ME013,Metrology and Quality Control,R.K. Jain,2014,Mechanical,Metrology
+ME014,Kinematics and Dynamics of Machines,George H. Martin,2002,Mechanical,Theory of Machines
+ME015,Advanced Engineering Thermodynamics,Adrian Bejan,2006,Mechanical,Thermodynamics
+EE001,Principles of Electric Circuits,Thomas L. Floyd,2014,Electrical,Electric Circuits
+EE002,Electrical Machinery Fundamentals,Stephen J. Chapman,2011,Electrical,Electrical Machines
+EE003,Power Systems Analysis,Bergen and Vittal,2000,Electrical,Power Systems
+EE004,Control Systems Engineering,Norman S. Nise,2015,Electrical,Control Systems
+EE005,Electronic Devices and Circuit Theory,Robert L. Boylestad,2012,Electrical,Electronic Circuits
+EE006,Signals and Systems,Alan V. Oppenheim,2009,Electrical,Signals and Systems
+EE007,Electromagnetics,William H. Hayt,2011,Electrical,Electromagnetics
+EE008,Power Electronics,Muhammad H. Rashid,2014,Electrical,Power Electronics
+EE009,Digital Signal Processing,J.G. Proakis,2006,Electrical,Digital Signal Processing
+EE010,Microprocessors and Microcontrollers,A. Nagoor Kani,2012,Electrical,Microprocessors
+EE011,Renewable Energy Engineering,Nicholas Jenkins,2010,Electrical,Renewable Energy
+EE012,Electrical Power Transmission and Distribution,S.L. Uppal,2005,Electrical,Power Systems
+EE013,Analog and Digital Communications,Haykin,2006,Electrical,Communications
+EE014,Semiconductor Physics and Devices,Donald A. Neamen,2011,Electrical,Electronic Circuits
+EE015,Introduction to Robotics,John J. Craig,2004,Electrical,Robotics
+CV001,Structural Analysis,R.C. Hibbeler,2017,Civil,Structural Analysis
+CV002,Soil Mechanics and Foundation Engineering,K.R. Arora,2008,Civil,Soil Mechanics
+CV003,Fluid Mechanics and Hydraulics,R.K. Bansal,2015,Civil,Fluid Mechanics
+CV004,Transportation Engineering,C.E.G. Justo,2013,Civil,Transportation Engineering
+CV005,Environmental Engineering,S.K. Garg,2010,Civil,Environmental Engineering
+CV006,Concrete Technology,M.S. Shetty,2013,Civil,Construction Materials
+CV007,Surveying,B.C. Punmia,2016,Civil,Surveying
+CV008,Design of Steel Structures,L.S. Negi,2004,Civil,Structural Design
+CV009,Reinforced Cement Concrete,B.C. Punmia,2015,Civil,Structural Design
+CV010,Hydraulic Machines,Jagdish Lal,2006,Civil,Fluid Mechanics
+CV011,Water Supply and Sanitary Engineering,G.S. Birdie,2011,Civil,Environmental Engineering
+CV012,Remote Sensing and GIS,Anji Reddy,2008,Civil,Geotechnical Engineering
+CV013,Quantity Surveying and Valuation,B.N. Dutta,2010,Civil,Quantity Surveying
+CV014,Highway Engineering,S.K. Khanna,2009,Civil,Transportation Engineering
+CV015,Construction Planning and Management,P.S. Gahlot,2013,Civil,Project Management
