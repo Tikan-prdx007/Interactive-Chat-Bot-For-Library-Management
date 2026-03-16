@@ -129,6 +129,14 @@ const BPUT_CURRICULUM = [
         ]
     },
 
+    {
+        branch: "CSE", year: 2, semester: 4, subjectName: "Python Programming", subjectCode: "OEC-CS401", category: "Open Elective", credits: "3-0-0",
+        description: "Python basics, control flow, functions, OOP, file handling, modules, and introduction to data science libraries.",
+        books: [
+            { title: "Let Us Python", author: "Yashavant Kanetkar & Aditya Kanetkar", publisher: "BPB Publications", edition: "6th", ISBN: "9789355515414", type: "Textbook", rack: "CSE-2Y-PY-01", totalCopies: 5, availableCopies: 4 },
+        ]
+    },
+
     // ── CSE Year 3, Semester 5 ──────────────────────────────────
     {
         branch: "CSE", year: 3, semester: 5, subjectName: "Computer Networks", subjectCode: "PCC-CS501", category: "Core", credits: "3-1-0",

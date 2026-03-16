@@ -77,6 +77,7 @@ const App = (() => {
     checkStreak();
     Theme.apply(Theme.get()); // sync toggle button icon
     Settings.load();          // apply saved font size & preferences
+    if (typeof BarcodeModule !== 'undefined') BarcodeModule.init(); // barcode CSS
   }
 
   function logout() {

@@ -439,6 +439,25 @@ mark.lhl {
   border: 1px solid var(--border);
   cursor: default; font-size: .78rem; font-weight: 600; font-family: inherit;
 }
+
+/* Header actions group */
+.lib-header-actions {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+
+/* Barcode / ISBN cell */
+.lib-isbn-cell {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.lib-barcode-svg {
+  width: 110px; height: 36px; display: block;
+}
+.lib-isbn-num {
+  font-family: 'Courier New', monospace;
+  font-size: .68rem; color: var(--text-muted);
+  letter-spacing: .03em;
+  white-space: nowrap;
+}
     `;
     document.head.appendChild(el);
   }
@@ -485,9 +504,14 @@ mark.lhl {
           <h2>📚 BPUT Library Catalogue</h2>
           <p>Biju Patnaik University of Technology · All Branches · All Years</p>
         </div>
-        <button class="lib-theme-btn" onclick="LibraryModule._toggleTheme()" title="Toggle theme">
-          <span id="lib-theme-icon">${_themeIcon()}</span>
-        </button>
+        <div class="lib-header-actions">
+          <button class="lib-scan-btn" onclick="BarcodeModule.manualSearch()" title="Enter ISBN manually">
+            🔢 ISBN Search
+          </button>
+          <button class="lib-scan-btn" onclick="BarcodeModule.openScanner()" title="Scan barcode with camera">
+            📷 Scan Book
+          </button>
+        </div>
       </div>
 
       <!-- Stats bar -->
@@ -610,6 +634,7 @@ mark.lhl {
                 <th>Branch</th>
                 <th>Subject</th>
                 <th>Copies</th>
+                <th>Barcode / ISBN</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -672,6 +697,7 @@ mark.lhl {
     filtered = res;
     page = Math.min(page, Math.max(1, Math.ceil(filtered.length / perPage)));
     _renderRows();
+    _renderBarcodes();
     _renderCount();
     _renderPagination();
   }
@@ -719,9 +745,38 @@ mark.lhl {
         <td><span class="lib-branch ${branchCls}">${(BRANCH_INFO[book.branch]||{}).icon||''} ${_e(book.branch)}</span></td>
         <td><span class="lib-subject-tag" title="${_e(book.subjectName)}">${_hl(book.subjectName, q)}</span></td>
         <td>${availEl}</td>
+        <td>
+          ${book.ISBN
+            ? `<div class="lib-isbn-cell">
+                <svg class="lib-barcode-svg" id="bc-svg-${_e(book.id)}"></svg>
+                <div class="lib-isbn-num">${_e(book.ISBN)}</div>
+               </div>`
+            : '<span style="color:var(--text-muted);font-size:.75rem">—</span>'
+          }
+        </td>
         <td>${action}</td>
       </tr>`;
     }).join('');
+  }
+
+  /* ── Render inline barcodes via JsBarcode ──────────────────────────────── */
+  function _renderBarcodes() {
+    if (typeof JsBarcode === 'undefined') return;
+    const svgs = document.querySelectorAll('.lib-barcode-svg');
+    svgs.forEach(svg => {
+      const id = svg.id; // bc-svg-{bookId}
+      const bookId = id.replace('bc-svg-', '');
+      const book = filtered.find(b => String(b.id) === String(bookId));
+      if (!book || !book.ISBN) return;
+      try {
+        JsBarcode(svg, book.ISBN, {
+          format: 'CODE128', lineColor: 'currentColor',
+          width: 1.2, height: 30,
+          displayValue: false, margin: 0,
+        });
+        svg.style.color = 'var(--text-secondary)';
+      } catch(e) { /* invalid barcode — leave blank */ }
+    });
   }
 
   /* ── Result count ───────────────────────────────────────────────────────── */
