@@ -36,13 +36,22 @@ const ChatModule = (() => {
         }
     }
 
+    function parseMarkdown(text) {
+        if (!text) return "";
+        return text
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            .replace(/`(.*?)`/g, '<code style="background:rgba(255,255,255,0.1);padding:2px 4px;border-radius:4px;font-family:monospace;">$1</code>')
+            .replace(/\n/g, '<br>');
+    }
+
     function loadHistory() {
         const container = document.getElementById("chat-messages");
         if (!container) return;
         AppState.chatHistory.slice(-30).forEach(m => {
             const div = document.createElement("div");
             div.className = `chat-msg ${m.role}`;
-            div.innerHTML = `<div class="msg-bubble">${m.text}</div><div class="msg-time">${m.time}</div>`;
+            div.innerHTML = `<div class="msg-bubble">${parseMarkdown(m.text)}</div><div class="msg-time">${m.time}</div>`;
             container.appendChild(div);
         });
         container.scrollTop = container.scrollHeight;
@@ -54,7 +63,7 @@ const ChatModule = (() => {
         const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const div = document.createElement("div");
         div.className = `chat-msg ${role}`;
-        div.innerHTML = `<div class="msg-bubble">${text}</div><div class="msg-time">${time}</div>`;
+        div.innerHTML = `<div class="msg-bubble">${parseMarkdown(text)}</div><div class="msg-time">${time}</div>`;
         container.appendChild(div);
         container.scrollTop = container.scrollHeight;
         if (role !== "typing") {
@@ -88,15 +97,27 @@ const ChatModule = (() => {
         send(val);
     }
 
-    function send(text) {
+    async function send(text) {
         addMessage("user", text);
         showTyping();
-        setTimeout(() => {
+
+        // ── ALL messages go to the backend → OpenAI handles everything ─────
+        try {
+            const res = await fetch("/api/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: text })
+            });
             removeTyping();
-            const reply = generateReply(text);
-            addMessage("bot", reply.text);
-            if (reply.navigate) setTimeout(() => App.navigate(reply.navigate), 800);
-        }, 900 + Math.random() * 600);
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            const data = await res.json();
+            const reply = data.reply || data.message || "Sorry, I received an empty response.";
+            addMessage("bot", reply.replace(/\n/g, "<br>"));
+        } catch (err) {
+            removeTyping();
+            addMessage("bot", "⚠️ Sorry, something went wrong. Please try again.");
+            console.error("[ShelfBot chat] fetch error:", err);
+        }
     }
 
     function pick(arr) {
@@ -149,7 +170,8 @@ const ChatModule = (() => {
             const book = LIBRARY_BOOKS.find(b => b.subject.toLowerCase().includes(weak.toLowerCase()) && b.available) || LIBRARY_BOOKS[0];
             return { text: `📌 Based on your performance, I recommend:<br><br>📚 Book: <strong>${book.title}</strong> (${book.subject})<br>🧠 Topic: Focus on <strong>${weak}</strong> — your score there needs a boost<br>🎯 Practice: Take a quiz in the Tutor module today!` };
         }
-        return { text: pick(CHAT_RESPONSES.unknown) };
+        // Unknown locally — signal to send() that OpenAI backend should handle this
+        return null;
     }
 
     return { render, send, sendInput };

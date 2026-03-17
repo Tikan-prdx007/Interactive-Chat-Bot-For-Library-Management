@@ -77,6 +77,12 @@
           <h1 class="lib-title">📚 <span>Book Catalogue</span></h1>
           <p class="lib-sub">Browse all books for BPUT Engineering students — Computer Science, Mechanical, Electrical &amp; Civil</p>
         </div>
+        <!-- Scan Book button -->
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <button class="lib-scan-btn" id="lib-scan-btn" onclick="BarcodeModule.openScanner()" aria-label="Scan book barcode">
+            <span class="scan-icon">📷</span> Scan Book
+          </button>
+        </div>
       </div>
 
       <!-- Quick stats row -->
@@ -107,6 +113,11 @@
           aria-label="Clear search"
           onclick="document.getElementById('lib-search').value=''; handleSearch('');"
         >✕</button>
+        <!-- Voice search button -->
+        <div class="lib-voice-wrap">
+          <button id="lib-voice-btn" class="lv-idle" aria-label="Voice search" title="Click to search by voice">🎤</button>
+          <span id="lib-voice-status"></span>
+        </div>
       </div>
     </div>
 
@@ -180,6 +191,7 @@
       <table class="books-table" id="books-table" aria-label="Library book catalogue">
         <thead>
           <tr>
+            <th scope="col" class="td-cover" style="width:48px;">Cover</th>
             <th scope="col">Book ID</th>
             <th scope="col">
               <button class="sort-btn" data-field="title" onclick="toggleSort('title')" aria-label="Sort by title">
@@ -221,7 +233,16 @@
 
 
   <!-- ── Script ────────────────────────────────────────────────────────────── -->
+  <!-- Open Library API -->
+  <script src="js/openlibrary-api.js"></script>
+  <!-- Barcode scanner dependencies -->
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <!-- Barcode module -->
+  <script src="js/barcode.js"></script>
+  <!-- Library browse + voice -->
   <script src="js/library-browse.js"></script>
+  <script src="js/library-voice.js"></script>
 
   <!--
     Bridge: handle the sort dropdown so it maps to the same toggleSort()

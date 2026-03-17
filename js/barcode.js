@@ -554,8 +554,22 @@ const BarcodeModule = (() => {
     // Simulate a tiny search delay for UX feedback
     await new Promise(r => setTimeout(r, 600));
 
-    const book = _searchByISBN(decodedText.trim());
-    _showResult(book, decodedText.trim());
+    const isbn = decodedText.trim();
+    const book = _searchByISBN(isbn);
+    if (book) {
+      _showResult(book, isbn);
+    } else {
+      // ── Open Library API fallback ──
+      _updateLoadingText('Searching Open Library…');
+      const apiBook = (typeof OpenLibraryAPI !== 'undefined')
+        ? await OpenLibraryAPI.fetchMetadata(isbn)
+        : null;
+      if (apiBook) {
+        _showAPIResult(apiBook, isbn);
+      } else {
+        _showResult(null, isbn);
+      }
+    }
   }
 
   /* ── ISBN Search ────────────────────────────────────────────────────── */
@@ -576,8 +590,13 @@ const BarcodeModule = (() => {
     area.innerHTML = `
       <div class="bc-loading">
         <div class="bc-spinner"></div>
-        <div class="bc-loading-text">Searching library database…</div>
+        <div class="bc-loading-text" id="bc-loading-text">Searching library database…</div>
       </div>`;
+  }
+
+  function _updateLoadingText(msg) {
+    const el = document.getElementById('bc-loading-text');
+    if (el) el.textContent = msg;
   }
 
   /* ── Result display ─────────────────────────────────────────────────── */
@@ -669,6 +688,69 @@ const BarcodeModule = (() => {
     }
   }
 
+  /* ── Open Library API result card ─────────────────────────────────────── */
+
+  function _showAPIResult(apiBook, isbn) {
+    const area = document.getElementById('bc-result-area');
+    if (!area) return;
+
+    const coverHTML = apiBook.coverUrl
+      ? `<img src="${_e(apiBook.coverUrl)}" alt="Book cover"
+            style="width:90px;border-radius:8px;margin-right:16px;flex-shrink:0;align-self:flex-start;"
+            onerror="this.style.display='none'">`
+      : '';
+
+    const subjectsHTML = apiBook.subjects
+      ? `<div class="bc-meta-item" style="grid-column:1/-1">
+           <span class="mi-label">Subjects</span>
+           <span class="mi-value">${_e(apiBook.subjects)}</span>
+         </div>`
+      : '';
+
+    const publisherHTML = apiBook.publisher
+      ? `<div class="bc-meta-item">
+           <span class="mi-label">Publisher</span>
+           <span class="mi-value">${_e(apiBook.publisher)}</span>
+         </div>`
+      : '';
+
+    area.innerHTML = `
+      <div class="bc-result">
+        <div class="bc-result-status success">🌐 Found via Open Library</div>
+        <div class="bc-book-card">
+          <div style="display:flex;align-items:flex-start;">
+            ${coverHTML}
+            <div style="flex:1;min-width:0;">
+              <div class="bc-book-title">${_e(apiBook.title)}</div>
+              <div class="bc-book-author">by ${_e(apiBook.author)}</div>
+            </div>
+          </div>
+          <div class="bc-book-meta" style="margin-top:14px;">
+            <div class="bc-meta-item">
+              <span class="mi-label">ISBN</span>
+              <span class="mi-value">${_e(isbn)}</span>
+            </div>
+            <div class="bc-meta-item">
+              <span class="mi-label">Year</span>
+              <span class="mi-value">${_e(apiBook.year || '—')}</span>
+            </div>
+            ${publisherHTML}
+            ${subjectsHTML}
+          </div>
+          <div style="margin-top:10px;padding:10px 12px;border-radius:8px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);font-size:.75rem;color:var(--text-muted,#6B7280);">
+            ℹ️ This book was found online but is <strong style="color:var(--text-secondary,#9CA3AF);">not yet in the SHELFBOT catalogue</strong>.
+          </div>
+          <div class="bc-book-actions" style="margin-top:14px;">
+            <a class="bc-act-btn bc-act-secondary" href="${_e(apiBook.openLibUrl)}" target="_blank" rel="noopener"
+               style="text-decoration:none;text-align:center;">🌐 View on Open Library</a>
+          </div>
+        </div>
+      </div>
+      <div class="bc-modal-foot">
+        <button class="bc-scan-again" onclick="BarcodeModule._rescan()">📷 Scan Another Book</button>
+      </div>`;
+  }
+
   /* ── Re-scan (show camera again) ────────────────────────────────────── */
 
   function _rescan() {
@@ -737,16 +819,29 @@ const BarcodeModule = (() => {
 
   /* ── Manual ISBN submit from inline input ─────────────────────────────── */
 
-  function _manualISBNSubmit() {
+  async function _manualISBNSubmit() {
     const input = document.getElementById('bc-manual-isbn');
     const isbn = input?.value?.trim();
     if (!isbn) { input?.focus(); return; }
 
     _showLoading();
-    setTimeout(() => {
-      const book = _searchByISBN(isbn);
+    await new Promise(r => setTimeout(r, 400));
+
+    const book = _searchByISBN(isbn);
+    if (book) {
       _showResult(book, isbn);
-    }, 500);
+    } else {
+      // ── Open Library API fallback ──
+      _updateLoadingText('Searching Open Library…');
+      const apiBook = (typeof OpenLibraryAPI !== 'undefined')
+        ? await OpenLibraryAPI.fetchMetadata(isbn)
+        : null;
+      if (apiBook) {
+        _showAPIResult(apiBook, isbn);
+      } else {
+        _showResult(null, isbn);
+      }
+    }
   }
 
   /* ── Init ────────────────────────────────────────────────────────────── */

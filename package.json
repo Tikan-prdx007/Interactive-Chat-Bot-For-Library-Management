@@ -6,11 +6,15 @@
   "main": "src/server.js",
   "scripts": {
     "dev": "node src/server.js",
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "mobile": "powershell -ExecutionPolicy Bypass -File ./start-mobile.ps1"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "dotenv": "^17.3.1",
     "express": "^5.2.1",
+    "groq-sdk": "^1.1.1",
+    "openai": "^6.31.0",
     "sqlite3": "^5.1.7"
   }
 }
-

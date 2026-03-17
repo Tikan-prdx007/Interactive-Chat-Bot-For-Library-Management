@@ -1,3 +1,5 @@
+require("dotenv").config(); // must be first — loads OPENAI_API_KEY into process.env
+
 const path = require("path");
 const express = require("express");
 const { exec } = require("child_process");
@@ -37,15 +39,20 @@ async function main() {
   });
 
   app.post("/api/chat", async (req, res) => {
+    const { message, memberId } = req.body || {};
     try {
-      const { message, memberId } = req.body || {};
       const result = await handleChat(db, {
         message,
         memberId: Number.isFinite(memberId) ? memberId : memberId ?? DEFAULT_MEMBER_ID
       });
       res.json({ ok: true, ...result });
     } catch (e) {
-      res.status(500).json({ ok: false, error: "SERVER_ERROR" });
+      console.error("[/api/chat] Unhandled error:", e?.message || e);
+      // Always return a reply so the frontend shows something useful
+      res.json({
+        ok: false,
+        reply: "Sorry, something went wrong. Please try again in a moment."
+      });
     }
   });
 

@@ -387,8 +387,17 @@ function renderRows() {
 
   tbody.innerHTML = paged.map(b => {
     const meta = DEPT_META[b.Department] || { emoji: '📖', cls: 'dept-cs', label: b.Department };
+    // Build cover URL: try Open Library by ISBN pattern derived from BookID
+    const coverSrc = (typeof OpenLibraryAPI !== 'undefined')
+      ? OpenLibraryAPI.coverUrl(b.BookID, 'S')
+      : '';
+    const placeholder = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='48'%3E%3Crect width='36' height='48' rx='3' fill='%23131A2E'/%3E%3Crect x='4' y='4' width='28' height='40' rx='2' fill='%231e2a45'/%3E%3Ctext x='18' y='30' text-anchor='middle' font-size='14' fill='%238B5CF6' opacity='.7'%3E%F0%9F%93%96%3C/text%3E%3C/svg%3E`;
+    const coverHTML = coverSrc
+      ? `<img src="${coverSrc}" alt="cover" class="book-cover-thumb" loading="lazy" onerror="this.onerror=null;this.src='${placeholder}'">`
+      : `<img src="${placeholder}" alt="cover" class="book-cover-thumb">`;
     return `
       <tr>
+        <td class="td-cover">${coverHTML}</td>
         <td class="td-id">${escHtml(b.BookID)}</td>
         <td class="td-title">${highlight(b.Title, q)}</td>
         <td class="td-author">${highlight(b.Author, q)}</td>
@@ -455,6 +464,7 @@ function showSkeleton() {
   if (!tbody) return;
   tbody.innerHTML = Array.from({ length: 8 }, () => `
     <tr class="skeleton-row">
+      <td><div class="skeleton-bar" style="width:36px;height:48px"></div></td>
       <td><div class="skeleton-bar" style="width:60px"></div></td>
       <td><div class="skeleton-bar" style="width:180px"></div></td>
       <td><div class="skeleton-bar" style="width:130px"></div></td>
@@ -519,6 +529,23 @@ function handlePageSizeChange(val) {
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  // Inject cover thumbnail styles
+  if (!document.getElementById('lib-browse-cover-css')) {
+    const s = document.createElement('style');
+    s.id = 'lib-browse-cover-css';
+    s.textContent = `
+      .td-cover { width: 48px; padding: 4px 6px; vertical-align: middle; text-align: center; }
+      .book-cover-thumb {
+        width: 36px; height: 48px;
+        object-fit: cover;
+        border-radius: 4px;
+        border: 1px solid rgba(255,255,255,.08);
+        background: #131A2E;
+        display: block;
+      }
+    `;
+    document.head.appendChild(s);
+  }
   initNavbar();
   loadBooks();
 });
