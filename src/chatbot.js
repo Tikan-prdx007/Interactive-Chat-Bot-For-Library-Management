@@ -26,12 +26,49 @@ function getGroq() {
   return _groq;
 }
 
-const SYSTEM_PROMPT =
-  "You are ShelfBot, a helpful academic assistant and library assistant for students at BPUT (Biju Patnaik University of Technology). " +
-  "Answer ALL user questions politely and clearly — academic topics, study tips, book recommendations, general knowledge, or casual conversation. " +
-  "If a question is unrelated to studies or library topics, still provide a helpful, friendly general answer instead of refusing. " +
-  "Use **bold** for key terms. Keep replies concise (3-5 sentences) unless the user asks for a detailed explanation. " +
-  "Never say you cannot help or redirect the user to another section.";
+const SYSTEM_PROMPT = `You are an advanced multimodal AI assistant integrated into a platform called "AmadeusAI" for students at BPUT (Biju Patnaik University of Technology).
+
+CORE OBJECTIVE:
+Deliver clear, helpful, and natural responses that improve user understanding, feel conversational and human, and adapt dynamically to input style.
+
+INTELLIGENCE & ADAPTATION:
+1. Detect input style automatically:
+   - Short, casual, or spoken-like → treat as VOICE INPUT → shorter, conversational responses
+   - Structured or detailed → treat as TEXT INPUT → structured, detailed responses
+2. Detect intent: Question / Concept explanation / Problem solving / Casual interaction
+
+VOICE MODE (when input is short/casual/spoken):
+- Natural speaking tone, sentences 8–15 words
+- No heavy formatting or markdown symbols
+- Use conversational fillers: "Okay, let's see...", "Here's the idea...", "Got it."
+- Break explanations into small chunks
+
+CHAT MODE (when input is structured/detailed):
+- Bullet points, numbered steps, **bold** for key terms
+- Structure: 1) Clear explanation 2) Example 3) Optional deeper insight
+- Keep concise unless asked for more
+
+CONTEXT AWARENESS:
+- Remember recent conversation context, avoid repeating info, build on previous answers
+- User is a university engineering student (Engineering, Maths, Programming, Exams)
+- Voice input may contain errors/missing punctuation — interpret intent and respond clearly
+
+UX-AWARE:
+- Avoid overly long responses
+- If input is unclear → ask a short clarifying question
+- Suggest next steps when helpful
+
+PERSONALITY: Friendly but professional. Helpful and patient. Slightly conversational.
+
+RESTRICTIONS:
+- Do NOT be robotic, overload with info, or go off-topic
+- Do NOT use complex jargon unless necessary
+- NEVER refuse to answer or redirect to another page
+- Use **bold** for key terms
+
+GOAL: Make the user feel — "This is fast, easy, and actually helpful."`;
+
+
 
 /**
  * Send any message to Groq (llama3-8b-8192) via SDK.
@@ -58,7 +95,7 @@ async function askGroq(userMessage, studentName) {
     return { reply: text || "Sorry, I received an empty response. Please try again." };
 
   } catch (e) {
-    console.error("[ShelfBot] Groq error:", e?.status || e?.message || e);
+    console.error("[AmadeusAI] Groq error:", e?.status || e?.message || e);
     // 429 = rate limit / quota — fall back gracefully
     if (e?.status === 429) {
       return localFallback(userMessage, studentName, "⚠️ _AI is busy right now — using offline mode._\n\n");
@@ -144,10 +181,10 @@ function localFallback(message, name, prefix = "") {
 
   // ── General ───────────────────────────────────────────────────────────────
   if (/^(hi|hello|hey|good morning|good afternoon|good evening)/.test(t)) {
-    return { reply: prefix + `Hello, ${name}! 👋 I'm **ShelfBot**, your academic and library assistant. Ask me anything:\n\n📚 Library: \`search title Clean Code\`, \`reserve 3\`, \`availability 1\`\n🧠 Topics: maths, CS, networks, databases, OOP...\n💡 Study tips, book recommendations\n\nWhat would you like to know?` };
+    return { reply: prefix + `Hello, ${name}! 👋 I'm **AmadeusAI**, your academic and library assistant. Ask me anything:\n\n📚 Library: \`search title Clean Code\`, \`reserve 3\`, \`availability 1\`\n🧠 Topics: maths, CS, networks, databases, OOP...\n💡 Study tips, book recommendations\n\nWhat would you like to know?` };
   }
   if (/who are you|what are you|your name|what can you do/.test(t)) {
-    return { reply: prefix + `I'm **ShelfBot** 🤖 — your AI academic and library assistant at BPUT.\n\n- 📚 Search, reserve & issue books from the library\n- 🧠 Explain academic topics (maths, CS, science, engineering)\n- 💡 Give study tips and book recommendations\n- 📊 Show your study dashboard\n\nJust ask me anything!` };
+    return { reply: prefix + `I'm **AmadeusAI** 🤖 — your AI academic and library assistant at BPUT.\n\n- 📚 Search, reserve & issue books from the library\n- 🧠 Explain academic topics (maths, CS, science, engineering)\n- 💡 Give study tips and book recommendations\n- 📊 Show your study dashboard\n\nJust ask me anything!` };
   }
   if (/study tip|how to study|focus|concentrate|exam|time management/.test(t)) {
     return { reply: prefix + "**Study tips** 📚\n\n1. **Pomodoro Technique**: 25 min focus → 5 min break\n2. **Active recall**: test yourself, don't just re-read\n3. **Spaced repetition**: review at increasing intervals\n4. **Feynman Technique**: explain it simply in your own words\n5. **Sleep**: memory consolidates during sleep — prioritise it\n6. **Mind maps**: connect concepts visually" };
@@ -158,7 +195,7 @@ function localFallback(message, name, prefix = "") {
 
   // ── Default ───────────────────────────────────────────────────────────────
   return {
-    reply: prefix + `I'm ShelfBot, ${name}! 🤖 Ask me about:\n\n🧠 **Topics**: trigonometry, recursion, sorting, OOP, databases, networks, OS, compilers, DP\n📚 **Library**: \`search title <book>\`, \`availability <id>\`, \`reserve <id>\`\n💡 **Study tips** — just ask "how to study"`
+    reply: prefix + `I'm AmadeusAI, ${name}! 🤖 Ask me about:\n\n🧠 **Topics**: trigonometry, recursion, sorting, OOP, databases, networks, OS, compilers, DP\n📚 **Library**: \`search title <book>\`, \`availability <id>\`, \`reserve <id>\`\n💡 **Study tips** — just ask "how to study"`
   };
 }
 
@@ -265,7 +302,7 @@ async function handleChat(db, { message, memberId = 1 }) {
   }
 
   if (parsed.intent === "HELP") {
-    return await askGroq(`The user asked for help. Respond as ShelfBot listing useful library commands: ${helpText()}`, name);
+    return await askGroq(`The user asked for help. Respond as AmadeusAI listing useful library commands: ${helpText()}`, name);
   }
 
   // ── Structured library commands → SQLite ─────────────────────────────────

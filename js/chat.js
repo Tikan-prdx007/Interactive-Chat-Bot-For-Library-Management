@@ -15,7 +15,6 @@ const ChatModule = (() => {
         <div class="chat-quick-btns">
           <button class="qbtn" onclick="ChatModule.send('Find me a book on algorithms')">📚 Find book</button>
           <button class="qbtn" onclick="ChatModule.send('Show my progress')">📊 My progress</button>
-          <button class="qbtn" onclick="ChatModule.send('Explain recursion to me')">🧠 Explain topic</button>
           <button class="qbtn" onclick="ChatModule.send('Give me a motivational quote')">💪 Motivate me</button>
         </div>
         <div class="chat-input-row">
@@ -143,16 +142,7 @@ const ChatModule = (() => {
         if (/progress|dashboard|stats|score|quiz|average|streak|hours|performance/.test(t)) {
             return { text: `Here's your quick snapshot, ${name}! 📊<br><br>📅 Study Hours: <strong>${s.studyHoursWeek} hrs</strong><br>🎯 Quiz Avg: <strong>${s.quizAvg}%</strong><br>🔥 Streak: <strong>${s.streak} days</strong><br>⭐ XP: <strong>${s.xp}</strong><br><br>Opening your dashboard now!`, navigate: "dashboard" };
         }
-        if (/explain|teach|learn|what is|how does|understand|topic|recursion|stack|queue|array|binary|oop/.test(t)) {
-            const topicGuess = Object.keys(TOPICS).find(tp => t.includes(tp.toLowerCase().split(" ")[0]));
-            if (topicGuess) {
-                return { text: `Great question, ${name}! Let me explain <strong>${topicGuess}</strong>. Opening the Tutor module now...`, navigate: "tutor" };
-            }
-            return { text: `I'd love to be your tutor, ${name}! 🧠 Head to the Tutor section to pick a topic and get a full explanation + quiz!`, navigate: "tutor" };
-        }
-        if (/quiz|test|practice|question/.test(t)) {
-            return { text: `Quiz time, ${name}! 🎯 Let me take you to the Tutor section where you can pick any topic and take a quiz!`, navigate: "tutor" };
-        }
+
         if (/motivat|encourage|inspire|cheer|feel|tired|stressed/.test(t)) {
             const quotes = [
                 `You've got this, ${name}! 💪 Every expert was once a beginner. Keep going!`,
@@ -168,7 +158,7 @@ const ChatModule = (() => {
         if (/recommend|suggest|what should i/.test(t)) {
             const weak = Object.entries(s.subjectScores).sort((a, b) => a[1] - b[1])[0][0];
             const book = LIBRARY_BOOKS.find(b => b.subject.toLowerCase().includes(weak.toLowerCase()) && b.available) || LIBRARY_BOOKS[0];
-            return { text: `📌 Based on your performance, I recommend:<br><br>📚 Book: <strong>${book.title}</strong> (${book.subject})<br>🧠 Topic: Focus on <strong>${weak}</strong> — your score there needs a boost<br>🎯 Practice: Take a quiz in the Tutor module today!` };
+            return { text: `📌 Based on your performance, I recommend:<br><br>📚 Book: <strong>${book.title}</strong> (${book.subject})<br>🧠 Topic: Focus on <strong>${weak}</strong> — your score there needs a boost` };
         }
         // Unknown locally — signal to send() that OpenAI backend should handle this
         return null;

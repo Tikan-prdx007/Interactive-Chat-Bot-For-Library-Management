@@ -1,7 +1,12 @@
-
 cloudflared.exe
 cf_new.log
 cf_url.txt
 
 node_modules/
 .env
+
+tunnel_url.txt
+tunnel_clean.txt
+tunnel_live.log
+MOBILE_URL.txt
+Videos/

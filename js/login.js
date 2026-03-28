@@ -21,9 +21,9 @@ const LoginScreen = (() => {
         </div>
         <div class="login-card">
           <div class="login-brand">
-            <div class="login-logo" style="width:72px;height:72px;overflow:hidden;border-radius:14px;"><img src="logo.jpg" alt="SHELFBOT Logo" style="width:100%;height:100%;object-fit:cover;"></div>
+            <div class="login-logo" style="width:72px;height:72px;overflow:hidden;border-radius:14px;"><img src="AmadeusAI.png" alt="AmadeusAI Logo" style="width:100%;height:100%;object-fit:cover;"></div>
             <div class="login-brand-text">
-              <div class="login-brand-name">SHELFBOT</div>
+              <div class="login-brand-name">AmadeusAI</div>
               <div class="login-brand-sub">AI-Powered Library & Study Companion</div>
             </div>
           </div>

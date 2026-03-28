@@ -64,7 +64,6 @@ const DashboardModule = (() => {
           <div class="tip-card">${tip}</div>
           <h3 style="margin-top:1.5rem">🕐 Recent Topics</h3>
           <ul class="recent-topics">${s.recentTopics.map(t => `<li>📌 ${t}</li>`).join("")}</ul>
-          <button class="btn btn-reserve" style="margin-top:1rem;width:100%" onclick="App.navigate('tutor')">🧠 Continue Learning →</button>
         </div>
       </div>`;
     }

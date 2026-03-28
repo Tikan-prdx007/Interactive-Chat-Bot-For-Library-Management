@@ -58,7 +58,7 @@ async function main() {
 
   app.listen(PORT, () => {
     const base = `http://localhost:${PORT}`;
-    console.log(`\n🚀 SHELFBOT running on ${base}`);
+    console.log(`\n🚀 AmadeusAI running on ${base}`);
     console.log(`   🏠 Homepage : ${base}/homepage.html`);
     console.log(`   📚 Library  : ${base}/library.html`);
     console.log(`   🤖 App      : ${base}/index.html\n`);

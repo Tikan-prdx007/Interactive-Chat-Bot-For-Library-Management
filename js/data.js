@@ -60,74 +60,7 @@ const DEFAULT_STUDENT = {
   issuedBooks: [],
 };
 
-const TOPICS = {
-  "Arrays": {
-    simple: "An array is like a row of lockers — each locker holds one value and has a number (index) starting from 0.",
-    technical: "An array is a contiguous block of memory storing elements of the same type. Access is O(1) by index, insertion/deletion at middle is O(n).",
-    example: "fruits = ['Apple', 'Banana', 'Cherry'] — fruits[0] is 'Apple'.",
-    code: `# Python Example\nfruits = ['Apple', 'Banana', 'Cherry']\nprint(fruits[1])  # Output: Banana`,
-    quiz: [
-      { q: "What is the time complexity of accessing an element in an array?", opts: ["O(n)", "O(1)", "O(log n)", "O(n²)"], ans: 1 },
-      { q: "Arrays in Python are called?", opts: ["Tuples", "Dicts", "Lists", "Sets"], ans: 2 },
-      { q: "What is the index of the first element?", opts: ["1", "-1", "0", "Depends"], ans: 2 },
-    ]
-  },
-  "Stacks": {
-    simple: "A stack is like a pile of plates — you can only add or remove from the TOP. This is called LIFO (Last In, First Out).",
-    technical: "Stack is a linear data structure with push (add) and pop (remove) operations, both O(1). Used in function calls, undo operations, DFS.",
-    example: "Browser back button — each page visited is pushed; pressing back pops the last page.",
-    code: `# Python Example\nstack = []\nstack.append('Page1')  # push\nstack.append('Page2')  # push\nstack.pop()            # returns 'Page2'`,
-    quiz: [
-      { q: "Which principle does a Stack follow?", opts: ["FIFO", "LIFO", "FILO alternate", "Random"], ans: 1 },
-      { q: "Which operation adds to a stack?", opts: ["pop", "enqueue", "push", "insert"], ans: 2 },
-      { q: "Stack is used in which traversal?", opts: ["BFS", "DFS", "Both", "Neither"], ans: 1 },
-    ]
-  },
-  "Queues": {
-    simple: "A queue is like a line at a ticket counter — first person in line is served first. This is FIFO (First In, First Out).",
-    technical: "Queue supports enqueue (add to rear) and dequeue (remove from front), both O(1) with a linked list. Used in BFS, task scheduling.",
-    example: "Print spooler — first document sent to printer is printed first.",
-    code: `# Python Example (deque)\nfrom collections import deque\nq = deque()\nq.append('Task1')   # enqueue\nq.append('Task2')   # enqueue\nq.popleft()         # returns 'Task1'`,
-    quiz: [
-      { q: "Which principle does a Queue follow?", opts: ["LIFO", "FIFO", "FILO", "Random"], ans: 1 },
-      { q: "Queue is used in which graph traversal?", opts: ["DFS", "BFS", "Both", "Neither"], ans: 1 },
-      { q: "Which end is used for insertion in a queue?", opts: ["Front", "Rear", "Both", "Middle"], ans: 1 },
-    ]
-  },
-  "Recursion": {
-    simple: "Recursion is a function that calls itself. Think of it like a mirror facing another mirror — infinite reflections, but we add a stopping condition.",
-    technical: "Recursion solves problems by breaking them into subproblems of the same type. Requires a base case (stop condition) and recursive case. Each call uses the call stack.",
-    example: "Calculating factorial: 5! = 5 × 4! = 5 × 4 × 3! ... until 1! = 1.",
-    code: `# Python Example\ndef factorial(n):\n    if n == 1:       # base case\n        return 1\n    return n * factorial(n-1)  # recursive case\n\nprint(factorial(5))  # 120`,
-    quiz: [
-      { q: "What prevents recursion from running forever?", opts: ["Loop", "Base case", "Return", "Stack"], ans: 1 },
-      { q: "What data structure does recursion internally use?", opts: ["Queue", "Array", "Stack", "Heap"], ans: 2 },
-      { q: "Factorial of 0 is?", opts: ["0", "1", "Undefined", "-1"], ans: 1 },
-    ]
-  },
-  "Binary Search": {
-    simple: "Binary search is like finding a word in a dictionary — you open the middle, decide left or right, and repeat. It only works on sorted data.",
-    technical: "Binary Search divides the search space in half each step. Time complexity: O(log n). Works only on sorted arrays. Uses mid = (low + high) / 2.",
-    example: "Searching 7 in [1,3,5,7,9,11]: mid=5 → 7>5 → right half [7,9,11] → mid=9 → 7<9 → [7] → Found!",
-    code: `# Python Example\ndef binary_search(arr, target):\n    low, high = 0, len(arr)-1\n    while low <= high:\n        mid = (low + high) // 2\n        if arr[mid] == target: return mid\n        elif arr[mid] < target: low = mid + 1\n        else: high = mid - 1\n    return -1`,
-    quiz: [
-      { q: "Time complexity of Binary Search?", opts: ["O(n)", "O(n²)", "O(log n)", "O(1)"], ans: 2 },
-      { q: "Binary Search requires the array to be?", opts: ["Sorted", "Unsorted", "Empty", "Unique"], ans: 0 },
-      { q: "Mid index formula?", opts: ["low+high", "(low+high)/2", "(low+high)//2", "high-low"], ans: 2 },
-    ]
-  },
-  "OOP Concepts": {
-    simple: "OOP is writing code using 'objects' — like blueprints. A Class is the blueprint, and an Object is the actual thing built from it.",
-    technical: "OOP has 4 pillars: Encapsulation (hiding data), Inheritance (extending classes), Polymorphism (many forms), Abstraction (showing only essentials).",
-    example: "Car class → Honda, BMW are objects. Both inherit from Car but have their own speed and color.",
-    code: `# Python Example\nclass Animal:\n    def __init__(self, name):\n        self.name = name\n    def speak(self): pass\n\nclass Dog(Animal):\n    def speak(self):\n        return f'{self.name} says Woof!'\n\nd = Dog('Rex')\nprint(d.speak())  # Rex says Woof!`,
-    quiz: [
-      { q: "Which OOP concept hides internal data?", opts: ["Inheritance", "Polymorphism", "Encapsulation", "Abstraction"], ans: 2 },
-      { q: "Which keyword is used to inherit in Python?", opts: ["extends", "inherits", "class Child(Parent)", "super"], ans: 2 },
-      { q: "What are the 4 pillars of OOP?", opts: ["ACID", "LIFO FIFO FILO LILO", "Encapsulation, Inheritance, Polymorphism, Abstraction", "None"], ans: 2 },
-    ]
-  },
-};
+
 
 const BADGES_CONFIG = [
   { id: "bookworm",        emoji: "📚", name: "Bookworm",        desc: "Issued your first book",          xp: 50  },
@@ -151,8 +84,7 @@ const CHAT_RESPONSES = {
   greet: ["Hey there, {name}! 👋 How can I help you today? Ask me about books, your progress, or any topic!", "Welcome back, {name}! 😊 Ready to learn something new today?"],
   library: ["Let me search the library for you, {name}! 📚", "Sure! I'll check book availability right away."],
   dashboard: ["Here's a snapshot of your academic progress, {name}! 📊", "Let me pull up your study stats!"],
-  tutor: ["Great choice, {name}! Let me explain that for you. 🧠", "I'd love to help you understand that topic better!"],
-  quiz: ["Let's test your knowledge! 🎯 I'll switch to the Tutor module for the quiz.", "Quiz time! Head to the Tutor section to get started."],
+
   motivate: ["You're doing amazing, {name}! Keep going! 🚀", "Every hour of study brings you closer to your goals! 💪"],
   unknown: ["That's an interesting question! Could you clarify — are you asking about a book, a topic, or your progress?", "I'm not sure I understood that. Try asking about a book, a topic, or your dashboard!"],
 };

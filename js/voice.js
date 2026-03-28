@@ -84,20 +84,55 @@ const VoiceModule = (() => {
     if (status) status.textContent = "Tap to speak again";
   }
 
-  function processVoiceInput(text) {
+  async function processVoiceInput(text) {
     stopListening();
     document.getElementById("voice-status").textContent = "⚙️ Processing...";
-    const reply = ChatModule.generateReplyText(text);
+
     const responseEl = document.getElementById("voice-response");
     if (responseEl) {
-      responseEl.innerHTML = `<strong>You said:</strong> "${text}"<br><br><strong>SHELFBOT:</strong> ${reply.text}`;
+      responseEl.innerHTML = `<strong>You said:</strong> "${text}"<br><br><em>Thinking...</em>`;
     }
-    speak(reply.text.replace(/<[^>]+>/g, ""));
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text })
+      });
+      const data = await res.json();
+      const reply = data.reply || "Sorry, I couldn't get a response. Please try again.";
+
+      // Strip markdown for display and TTS
+      const plainText = reply
+        .replace(/\*\*(.*?)\*\*/g, '$1')
+        .replace(/\*(.*?)\*/g, '$1')
+        .replace(/`(.*?)`/g, '$1')
+        .replace(/<br\s*\/?>/gi, ' ')
+        .replace(/<[^>]+>/g, '');
+
+      if (responseEl) {
+        // Show formatted reply
+        const formatted = reply
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\*(.*?)\*/g, '<em>$1</em>')
+          .replace(/\n/g, '<br>');
+        responseEl.innerHTML = `<strong>You said:</strong> "${text}"<br><br><strong>SHELFBOT:</strong><br>${formatted}`;
+      }
+
+      speak(plainText);
+
+    } catch (err) {
+      if (responseEl) {
+        responseEl.innerHTML = `<strong>You said:</strong> "${text}"<br><br>⚠️ Could not reach the server. Make sure the server is running.`;
+      }
+    }
+
     setTimeout(() => {
-      if (document.getElementById("voice-status"))
-        document.getElementById("voice-status").textContent = "Tap the microphone to speak again";
+      const status = document.getElementById("voice-status");
+      if (status) status.textContent = "Tap the microphone to speak again";
     }, 500);
   }
+
 
   function speak(text) {
     if (!window.speechSynthesis) return;

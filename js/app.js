@@ -50,9 +50,7 @@ const App = (() => {
     home: () => renderHome(),
     library: () => LibraryModule.render(),
     dashboard: () => DashboardModule.render(),
-    tutor: () => TutorModule.render(),
-    chat: () => ChatModule.render(),
-    voice: () => VoiceModule.render(),
+    assistant: () => AssistantModule.render(),
   };
 
   let activePanel = "home";
@@ -113,9 +111,7 @@ const App = (() => {
       { id: "home", icon: "🏠", label: "Home" },
       { id: "library", icon: "📚", label: "Library" },
       { id: "dashboard", icon: "📊", label: "Dashboard" },
-      { id: "tutor", icon: "🧠", label: "Tutor" },
-      { id: "chat", icon: "💬", label: "Chat" },
-      { id: "voice", icon: "🎤", label: "Voice" },
+      { id: "assistant", icon: "🤖", label: "Assistant" },
     ];
     nav.innerHTML = items.map(item => `
       <button class="nav-btn ${activePanel === item.id ? 'active' : ''}" id="nav-${item.id}" onclick="App.navigate('${item.id}')">
@@ -149,7 +145,6 @@ const App = (() => {
     const improvePct = Math.max(0, Math.round(s.quizAvg - 68));
     const panel = document.getElementById("panel-home");
     const recBook = LIBRARY_BOOKS.find(b => b.subject.toLowerCase().includes(weakSubj[0].toLowerCase()) && b.available) || LIBRARY_BOOKS.find(b => b.available) || LIBRARY_BOOKS[0];
-    const recTopic = Object.keys(TOPICS).find(t => !s.recentTopics.includes(t)) || Object.keys(TOPICS)[0];
     panel.innerHTML = `
           <div class="home-greeting">
             <div class="greeting-label">Welcome back</div>
@@ -171,9 +166,7 @@ const App = (() => {
           <div class="home-quick-grid">
             <div class="quick-card" onclick="App.navigate('library')"><div class="qc-icon">📚</div><div class="qc-title">Library</div><div class="qc-desc">Search & reserve 30+ books</div></div>
             <div class="quick-card" onclick="App.navigate('dashboard')"><div class="qc-icon">📊</div><div class="qc-title">Dashboard</div><div class="qc-desc">Track your stats & performance</div></div>
-            <div class="quick-card" onclick="App.navigate('tutor')"><div class="qc-icon">🧠</div><div class="qc-title">Tutor</div><div class="qc-desc">Learn with explanations & quizzes</div></div>
-            <div class="quick-card" onclick="App.navigate('chat')"><div class="qc-icon">💬</div><div class="qc-title">AI Chat</div><div class="qc-desc">Get personalized academic help</div></div>
-            <div class="quick-card" onclick="App.navigate('voice')"><div class="qc-icon">🎤</div><div class="qc-title">Voice Mode</div><div class="qc-desc">Talk to SHELFBOT hands-free</div></div>
+            <div class="quick-card" onclick="App.navigate('assistant')"><div class="qc-icon">🤖</div><div class="qc-title">AI Assistant</div><div class="qc-desc">Chat & voice — ask me anything</div></div>
           </div>
           <div class="home-recommend">
             <h3>📌 Recommended for You, ${s.name}</h3>
@@ -181,10 +174,6 @@ const App = (() => {
               <div class="rec-item" onclick="App.navigate('library')" style="cursor:pointer">
                 <div class="rec-emoji">${recBook.emoji}</div>
                 <div class="rec-info"><div class="rec-title">${recBook.title}</div><div class="rec-sub">📚 Book · ${recBook.subject} · Shelf ${recBook.shelf}</div></div>
-              </div>
-              <div class="rec-item" onclick="App.navigate('tutor')" style="cursor:pointer">
-                <div class="rec-emoji">🧠</div>
-                <div class="rec-info"><div class="rec-title">Study: ${recTopic}</div><div class="rec-sub">🎯 Topic · New for you</div></div>
               </div>
               <div class="rec-item" onclick="App.navigate('dashboard')" style="cursor:pointer">
                 <div class="rec-emoji">⚠️</div>
@@ -213,21 +202,16 @@ const App = (() => {
   return { init, afterLogin, navigate, logout };
 })();
 
-// Export generateReplyText for voice module
+// Export generateReplyText for legacy compatibility
 ChatModule.generateReplyText = function (text) {
-  // Reuse logic from send but return object without navigating
   const t = text.toLowerCase();
   const s = AppState.student;
   const name = s.name;
   if (/hi|hello|hey/.test(t)) return { text: `Hey ${name}! How can I help you?` };
   if (/book|find|library/.test(t)) return { text: `I'll search the library for you! Say a book title or subject.`, navigate: "library" };
   if (/progress|dashboard|stats/.test(t)) return { text: `Your quiz average is ${s.quizAvg}% and streak is ${s.streak} days! Great going, ${name}!`, navigate: "dashboard" };
-  if (/explain|recursion|stack|queue|array|binary|oop/.test(t)) {
-    const topicGuess = Object.keys(TOPICS).find(tp => t.includes(tp.toLowerCase().split(" ")[0]));
-    return { text: `Great! Opening the tutor for ${topicGuess || "your topic"} now!`, navigate: "tutor" };
-  }
   if (/motivat|inspire|cheer/.test(t)) return { text: `You're doing awesome, ${name}! Keep going! 💪` };
-  return { text: `Interesting! Could you clarify — are you asking about a book, topic, or your progress?` };
+  return { text: `Interesting! Could you clarify — are you asking about a book or your progress?` };
 };
 
 // ── Boot ──────────────────────────────────────────────────────────────────────
