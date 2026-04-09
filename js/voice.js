@@ -1,153 +1,300 @@
-// ─── Voice Module ─────────────────────────────────────────────────────────────
+// ─── TTSEngine — Premium Text-to-Speech Module ────────────────────────────────
+// Priority: OpenAI TTS (/api/tts) → Browser TTS with smart voice picker → silent
+// Voice prefs & speed persisted to localStorage under "bookflow_voice_prefs".
 
-const VoiceModule = (() => {
+const TTSEngine = (() => {
 
-  let recognition = null;
-  let listening = false;
+  // ── Constants ────────────────────────────────────────────────────────────────
+  const PREFS_KEY = "bookflow_voice_prefs";
 
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  // Maps friendly voice keys → OpenAI voice names
+  const OPENAI_VOICE_MAP = {
+    female:  "nova",
+    male:    "onyx",
+    neutral: "alloy",
+    shimmer: "shimmer",
+    echo:    "echo",
+  };
 
-  function render() {
-    const supported = !!SpeechRecognition;
-    const panel = document.getElementById("panel-voice");
-    panel.innerHTML = `
-      <div class="panel-header">
-        <h2>🎤 Voice Mode</h2>
-        <p class="panel-sub">Speak to SHELFBOT hands-free</p>
-      </div>
-      ${!supported ? `<div class="voice-unsupported">⚠️ Your browser does not support Voice Recognition. Please use Google Chrome for this feature.</div>` : ""}
-      <div class="voice-orb-wrap">
-        <div class="voice-orb ${supported ? 'orb-ready' : 'orb-off'}" id="voice-orb" onclick="${supported ? 'VoiceModule.toggle()' : ''}">
-          <span class="orb-icon">${supported ? "🎤" : "🚫"}</span>
-        </div>
-        <div class="voice-status" id="voice-status">${supported ? "Tap the microphone to speak" : "Voice not supported"}</div>
-      </div>
-      <div class="voice-transcript-wrap">
-        <div class="voice-label">📝 Transcript</div>
-        <div class="voice-transcript" id="voice-transcript">Your speech will appear here...</div>
-      </div>
-      <div class="voice-response-wrap">
-        <div class="voice-label">🤖 SHELFBOT's Response</div>
-        <div class="voice-response" id="voice-response">Waiting for your question...</div>
-      </div>
-      <div class="voice-tips">
-        <div class="voice-tip-title">💡 Try saying:</div>
-        <div class="voice-tips-grid">
-          <span class="voice-chip" onclick="VoiceModule.simulateSpeech('Find me a book on Python')">Find me a book on Python</span>
-          <span class="voice-chip" onclick="VoiceModule.simulateSpeech('Show my study progress')">Show my study progress</span>
-          <span class="voice-chip" onclick="VoiceModule.simulateSpeech('Explain recursion')">Explain recursion</span>
-          <span class="voice-chip" onclick="VoiceModule.simulateSpeech('Give me a motivational quote')">Motivate me</span>
-        </div>
-      </div>`;
+  // Gender hints for browser TTS voice picker
+  const BROWSER_GENDER_HINT = {
+    female:  "female",
+    male:    "male",
+    neutral: "neutral",
+    shimmer: "female",
+    echo:    "male",
+  };
+
+  // ── State ────────────────────────────────────────────────────────────────────
+  let prefs = {
+    voice:   "female",   // key from OPENAI_VOICE_MAP
+    speed:   1.0,        // 0.8 – 1.5
+    enabled: true,       // voice response on/off
+  };
+
+  // Single audio element — reused for every TTS call (prevents overlap)
+  let audioEl   = null;
+  let _speaking  = false;
+  let _listeners = {};   // event callbacks: { start, end, error }
+
+  // Whether the server confirmed OpenAI TTS is available
+  let _openaiAvailable = null; // null = not probed yet, true/false after first call
+
+  // ── Init ─────────────────────────────────────────────────────────────────────
+  function init() {
+    _loadPrefs();
+    _ensureAudioEl();
+    // Pre-probe TTS availability (silent – no text, just checks route)
+    _probeTTS();
+    console.log("[TTSEngine] init — voice:", prefs.voice, "speed:", prefs.speed, "enabled:", prefs.enabled);
   }
 
-  function toggle() {
-    if (listening) { stopListening(); } else { startListening(); }
-  }
-
-  function startListening() {
-    if (!SpeechRecognition) return;
-    recognition = new SpeechRecognition();
-    recognition.lang = "en-US";
-    recognition.interimResults = true;
-    recognition.maxAlternatives = 1;
-
-    recognition.onstart = () => {
-      listening = true;
-      document.getElementById("voice-orb").classList.add("orb-active");
-      document.getElementById("voice-status").textContent = "🔴 Listening... speak now";
-    };
-
-    recognition.onresult = (e) => {
-      const transcript = Array.from(e.results).map(r => r[0].transcript).join("");
-      document.getElementById("voice-transcript").textContent = transcript;
-      if (e.results[e.results.length - 1].isFinal) {
-        processVoiceInput(transcript);
-      }
-    };
-
-    recognition.onerror = (e) => {
-      document.getElementById("voice-status").textContent = `⚠️ Error: ${e.error}. Try again.`;
-      stopListening();
-    };
-
-    recognition.onend = () => { listening = false; };
-    recognition.start();
-  }
-
-  function stopListening() {
-    if (recognition) { recognition.stop(); recognition = null; }
-    listening = false;
-    const orb = document.getElementById("voice-orb");
-    if (orb) orb.classList.remove("orb-active");
-    const status = document.getElementById("voice-status");
-    if (status) status.textContent = "Tap to speak again";
-  }
-
-  async function processVoiceInput(text) {
-    stopListening();
-    document.getElementById("voice-status").textContent = "⚙️ Processing...";
-
-    const responseEl = document.getElementById("voice-response");
-    if (responseEl) {
-      responseEl.innerHTML = `<strong>You said:</strong> "${text}"<br><br><em>Thinking...</em>`;
-    }
-
+  async function _probeTTS() {
     try {
-      const res = await fetch("/api/chat", {
+      const res = await fetch("/api/tts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text })
+        body: JSON.stringify({ text: " ", voice: "alloy" }),
       });
-      const data = await res.json();
-      const reply = data.reply || "Sorry, I couldn't get a response. Please try again.";
-
-      // Strip markdown for display and TTS
-      const plainText = reply
-        .replace(/\*\*(.*?)\*\*/g, '$1')
-        .replace(/\*(.*?)\*/g, '$1')
-        .replace(/`(.*?)`/g, '$1')
-        .replace(/<br\s*\/?>/gi, ' ')
-        .replace(/<[^>]+>/g, '');
-
-      if (responseEl) {
-        // Show formatted reply
-        const formatted = reply
-          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-          .replace(/\*(.*?)\*/g, '<em>$1</em>')
-          .replace(/\n/g, '<br>');
-        responseEl.innerHTML = `<strong>You said:</strong> "${text}"<br><br><strong>SHELFBOT:</strong><br>${formatted}`;
+      if (res.headers.get("Content-Type")?.includes("audio")) {
+        _openaiAvailable = true;
+        console.log("[TTSEngine] OpenAI TTS: ✅ available");
+      } else {
+        const json = await res.json();
+        _openaiAvailable = !json.fallback;
+        console.log("[TTSEngine] OpenAI TTS:", _openaiAvailable ? "✅" : "🔄 fallback (browser TTS)");
       }
-
-      speak(plainText);
-
-    } catch (err) {
-      if (responseEl) {
-        responseEl.innerHTML = `<strong>You said:</strong> "${text}"<br><br>⚠️ Could not reach the server. Make sure the server is running.`;
-      }
+    } catch {
+      _openaiAvailable = false;
     }
-
-    setTimeout(() => {
-      const status = document.getElementById("voice-status");
-      if (status) status.textContent = "Tap the microphone to speak again";
-    }, 500);
   }
 
+  function _loadPrefs() {
+    try {
+      const raw = localStorage.getItem(PREFS_KEY);
+      if (raw) prefs = { ...prefs, ...JSON.parse(raw) };
+    } catch {}
+  }
 
-  function speak(text) {
-    if (!window.speechSynthesis) return;
+  function _savePrefs() {
+    localStorage.setItem(PREFS_KEY, JSON.stringify(prefs));
+  }
+
+  // ── Audio element management ─────────────────────────────────────────────────
+  function _ensureAudioEl() {
+    if (audioEl) return;
+    audioEl = document.createElement("audio");
+    audioEl.id = "bookflow-tts-audio";
+    audioEl.style.display = "none";
+    audioEl.addEventListener("play",  () => { _speaking = true;  _emit("start"); });
+    audioEl.addEventListener("ended", () => { _speaking = false; _emit("end");   });
+    audioEl.addEventListener("error", () => { _speaking = false; _emit("error"); });
+    document.body.appendChild(audioEl);
+  }
+
+  function _emit(event) {
+    if (typeof _listeners[event] === "function") _listeners[event]();
+  }
+
+  // ── Core speak ───────────────────────────────────────────────────────────────
+  /**
+   * Speak text using the best available TTS.
+   * @param {string} text
+   * @param {object} [opts]  { voiceOverride, speedOverride }
+   */
+  async function speak(text, opts = {}) {
+    if (!text || !text.trim() || !prefs.enabled) return;
+
+    const cleanText = _stripHTML(text).replace(/\s+/g, " ").trim();
+    if (!cleanText) return;
+
+    // Stop anything currently playing
+    stop();
+
+    const voiceKey = opts.voiceOverride || prefs.voice;
+    const speed    = opts.speedOverride  || prefs.speed;
+
+    // Try OpenAI TTS first, unless we already know it's unavailable
+    if (_openaiAvailable !== false) {
+      const success = await _speakOpenAI(cleanText, voiceKey, speed);
+      if (success) return;
+    }
+
+    // Fallback: Browser TTS
+    _speakBrowser(cleanText, voiceKey, speed);
+  }
+
+  async function _speakOpenAI(text, voiceKey, speed) {
+    try {
+      const oaiVoice = OPENAI_VOICE_MAP[voiceKey] || "alloy";
+      const res = await fetch("/api/tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text, voice: oaiVoice }),
+      });
+
+      if (!res.ok) { _openaiAvailable = false; return false; }
+
+      const contentType = res.headers.get("Content-Type") || "";
+      if (!contentType.includes("audio")) {
+        // Server returned fallback JSON
+        const json = await res.json();
+        if (json.fallback) { _openaiAvailable = false; return false; }
+      }
+
+      _openaiAvailable = true;
+      const blob = await res.blob();
+      const url  = URL.createObjectURL(blob);
+
+      _ensureAudioEl();
+      audioEl.src             = url;
+      audioEl.playbackRate    = Math.min(Math.max(speed, 0.5), 2.0);
+      audioEl.onended = () => { URL.revokeObjectURL(url); };
+      await audioEl.play();
+      return true;
+
+    } catch (e) {
+      console.warn("[TTSEngine] OpenAI TTS failed:", e.message);
+      _openaiAvailable = false;
+      return false;
+    }
+  }
+
+  function _speakBrowser(text, voiceKey, speed) {
+    if (!window.speechSynthesis) { _emit("error"); return; }
     window.speechSynthesis.cancel();
-    const utt = new SpeechSynthesisUtterance(text);
-    utt.lang = "en-US";
-    utt.rate = 1.0;
-    utt.pitch = 1.1;
+
+    const utt  = new SpeechSynthesisUtterance(text);
+    utt.lang   = "en-US";
+    utt.rate   = Math.min(Math.max(speed, 0.5), 2.0);
+    utt.pitch  = voiceKey === "female" || voiceKey === "shimmer" ? 1.15 : 1.0;
+
+    // Pick best browser voice
+    const chosen = _pickBrowserVoice(BROWSER_GENDER_HINT[voiceKey] || "neutral");
+    if (chosen) utt.voice = chosen;
+
+    utt.onstart = () => { _speaking = true;  _emit("start"); };
+    utt.onend   = () => { _speaking = false; _emit("end");   };
+    utt.onerror = () => { _speaking = false; _emit("error"); };
+
     window.speechSynthesis.speak(utt);
   }
 
-  function simulateSpeech(text) {
-    document.getElementById("voice-transcript").textContent = text;
-    processVoiceInput(text);
+  /**
+   * Pick the best browser voice for a given gender hint.
+   * Ranking: Google US > Microsoft > first en-US match
+   */
+  function _pickBrowserVoice(gender) {
+    const voices = window.speechSynthesis.getVoices();
+    if (!voices.length) return null;
+
+    const enUS = voices.filter(v => v.lang.startsWith("en"));
+
+    // Prefer Google voices (most natural in Chrome)
+    const google = enUS.filter(v => v.name.toLowerCase().includes("google"));
+    // Then Microsoft
+    const ms     = enUS.filter(v => v.name.toLowerCase().includes("microsoft"));
+
+    const pools = [google, ms, enUS];
+
+    for (const pool of pools) {
+      if (!pool.length) continue;
+
+      if (gender === "female") {
+        const f = pool.find(v =>
+          /female|woman|girl|zira|siri|nova|emma|aria|jenny|michelle|susan/i.test(v.name)
+        );
+        if (f) return f;
+      }
+      if (gender === "male") {
+        const m = pool.find(v =>
+          /male|man|david|mark|guy|james|ryan|eric|andrew|tom/i.test(v.name)
+        );
+        if (m) return m;
+      }
+      // Neutral or no match: just return first
+      if (pool.length) return pool[0];
+    }
+
+    return voices[0];
   }
 
-  return { render, toggle, simulateSpeech };
+  // ── Stop ─────────────────────────────────────────────────────────────────────
+  function stop() {
+    // Stop HTML5 audio
+    if (audioEl && !audioEl.paused) {
+      audioEl.pause();
+      audioEl.src = "";
+    }
+    // Stop browser TTS
+    if (window.speechSynthesis && window.speechSynthesis.speaking) {
+      window.speechSynthesis.cancel();
+    }
+    _speaking = false;
+  }
+
+  // ── Settings getters / setters ───────────────────────────────────────────────
+  function setVoice(key) {
+    if (!OPENAI_VOICE_MAP[key]) return;
+    prefs.voice = key;
+    _savePrefs();
+  }
+
+  function getVoice() { return prefs.voice; }
+
+  function setSpeed(rate) {
+    prefs.speed = Math.min(Math.max(parseFloat(rate) || 1.0, 0.8), 1.5);
+    _savePrefs();
+  }
+
+  function getSpeed() { return prefs.speed; }
+
+  function setEnabled(enabled) {
+    prefs.enabled = !!enabled;
+    if (!prefs.enabled) stop();
+    _savePrefs();
+  }
+
+  function isEnabled() { return prefs.enabled; }
+
+  function isSpeaking() { return _speaking; }
+
+  function isOpenAIAvailable() { return _openaiAvailable === true; }
+
+  function getVoiceOptions() {
+    return [
+      { key: "female",  label: "Female",  icon: "👩",  desc: "Soft & natural"  },
+      { key: "male",    label: "Male",    icon: "👨",  desc: "Deep & clear"    },
+      { key: "neutral", label: "Neutral", icon: "🧑",  desc: "Balanced tone"   },
+      { key: "shimmer", label: "Shimmer", icon: "✨",  desc: "Expressive"      },
+      { key: "echo",    label: "Echo",    icon: "🔊",  desc: "Resonant"        },
+    ];
+  }
+
+  /** Register event listeners for speaking start/end/error */
+  function on(event, cb) {
+    _listeners[event] = cb;
+  }
+
+  /** Utility: strip HTML tags from text before speaking */
+  function _stripHTML(html) {
+    const tmp = document.createElement("div");
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || "";
+  }
+
+  // ── Public API ───────────────────────────────────────────────────────────────
+  return {
+    init,
+    speak,
+    stop,
+    setVoice,    getVoice,
+    setSpeed,    getSpeed,
+    setEnabled,  isEnabled,
+    isSpeaking,  isOpenAIAvailable,
+    getVoiceOptions,
+    on,
+    PREFS_KEY,
+  };
+
 })();

@@ -1,12 +1,12 @@
 # ============================================
-# AmadeusAI Mobile Access Launcher
+# BookFLow Mobile Access Launcher
 # Starts the server + a fresh Cloudflare tunnel
 # and prints the mobile URL reliably.
 # ============================================
 
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "   AmadeusAI Mobile Launcher" -ForegroundColor Cyan
+Write-Host "   BookFLow Mobile Launcher" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 

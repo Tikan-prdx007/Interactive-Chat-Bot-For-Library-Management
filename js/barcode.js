@@ -672,7 +672,7 @@ const BarcodeModule = (() => {
           <div class="bc-book-card" style="text-align:center;padding:24px;">
             <div style="font-size:2.5rem;margin-bottom:8px;">🔍</div>
             <div style="font-size:.95rem;font-weight:600;color:var(--text-primary,#E5E7EB);margin-bottom:4px;">
-              No matching book in the SHELFBOT database
+              No matching book in the BookFLow database
             </div>
             <div style="font-size:.82rem;color:var(--text-muted,#6B7280);margin-bottom:4px;">
               Scanned value: <code style="background:rgba(255,255,255,.06);padding:2px 8px;border-radius:4px;">${_e(scannedValue)}</code>
@@ -738,7 +738,7 @@ const BarcodeModule = (() => {
             ${subjectsHTML}
           </div>
           <div style="margin-top:10px;padding:10px 12px;border-radius:8px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);font-size:.75rem;color:var(--text-muted,#6B7280);">
-            ℹ️ This book was found online but is <strong style="color:var(--text-secondary,#9CA3AF);">not yet in the SHELFBOT catalogue</strong>.
+            ℹ️ This book was found online but is <strong style="color:var(--text-secondary,#9CA3AF);">not yet in the BookFLow catalogue</strong>.
           </div>
           <div class="bc-book-actions" style="margin-top:14px;">
             <a class="bc-act-btn bc-act-secondary" href="${_e(apiBook.openLibUrl)}" target="_blank" rel="noopener"

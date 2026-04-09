@@ -6,10 +6,13 @@ const Settings = (() => {
   const KEY = "libramate_settings";
 
   const DEFAULTS = {
-    theme: "dark",       // "dark" | "light"
-    fontSize: "medium",     // "small" | "medium" | "large" | "xl"
+    theme: "dark",         // "dark" | "light"
+    fontSize: "medium",   // "small" | "medium" | "large" | "xl"
     notifications: true,
   };
+
+  // Voice defaults are stored separately by TTSEngine (bookflow_voice_prefs)
+  // We read/write them via TTSEngine API so there's a single source of truth.
 
   const FONT_SIZES = {
     small: "13px",
@@ -27,6 +30,8 @@ const Settings = (() => {
       const raw = localStorage.getItem(KEY);
       if (raw) prefs = { ...DEFAULTS, ...JSON.parse(raw) };
     } catch { }
+    // Always sync theme from Theme module (single source of truth — defaults to dark)
+    prefs.theme = Theme.get();
     _applyAll();
   }
 
@@ -35,8 +40,8 @@ const Settings = (() => {
   }
 
   function _applyAll() {
-    // Theme
-    Theme.apply(prefs.theme);
+    // Theme — use Theme module's stored value as the authoritative source
+    Theme.apply(Theme.get());
     // Font size
     document.documentElement.style.fontSize = FONT_SIZES[prefs.fontSize] || FONT_SIZES.medium;
   }
@@ -81,6 +86,54 @@ const Settings = (() => {
           </div>
           <button class="sd-close" onclick="Settings.close()" aria-label="Close">✕</button>
         </div>
+
+        <!-- ── VOICE SETTINGS ── -->
+        <section class="sd-section sd-section-voice">
+          <div class="sd-section-label">🎙️ Voice Settings</div>
+
+          <!-- Voice selector cards -->
+          <div class="sd-voice-label">Voice Style</div>
+          <div class="sd-voice-grid" id="sd-voice-grid">
+            ${_renderVoiceCards()}
+          </div>
+
+          <!-- Preview button -->
+          <button class="sd-preview-btn" id="sd-preview-btn"
+                  onclick="Settings._previewVoice()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Preview Voice
+          </button>
+
+          <!-- Speed slider -->
+          <div class="sd-speed-row">
+            <div class="sd-row-info">
+              <div class="sd-row-title">Voice Speed</div>
+              <div class="sd-row-sub">0.8× — 1.5×</div>
+            </div>
+            <div class="sd-speed-control">
+              <input type="range" class="sd-speed-slider" id="sd-speed-slider"
+                     min="0.8" max="1.5" step="0.05"
+                     value="${TTSEngine.getSpeed()}"
+                     oninput="Settings._onSpeedChange(this.value)"
+                     onchange="Settings._onSpeedChange(this.value)">
+              <span class="sd-speed-display" id="sd-speed-display">${TTSEngine.getSpeed().toFixed(1)}×</span>
+            </div>
+          </div>
+
+          <!-- Voice response toggle -->
+          <div class="sd-row">
+            <div class="sd-row-info">
+              <div class="sd-row-title">Voice Response</div>
+              <div class="sd-row-sub">AI reads replies aloud</div>
+            </div>
+            <button class="sd-toggle ${TTSEngine.isEnabled() ? 'on' : ''}"
+                    id="toggle-voice-resp"
+                    onclick="Settings._toggleVoiceResp()"
+                    aria-pressed="${TTSEngine.isEnabled()}">
+              <span class="sd-toggle-knob"></span>
+            </button>
+          </div>
+        </section>
 
         <!-- ── NOTIFICATIONS ── -->
         <section class="sd-section">
@@ -159,14 +212,14 @@ const Settings = (() => {
         <section class="sd-section sd-section-danger">
           <div class="sd-section-label">⚠️ Account</div>
           <button class="sd-btn-action sd-btn-danger" onclick="Settings._confirmLogout()">
-            🚪 Logout from SHELFBOT
+            🚪 Logout from BookFLow
           </button>
           <button class="sd-btn-action sd-btn-ghost" onclick="Settings._resetProgress()">
             🔄 Reset My Progress
           </button>
         </section>
 
-        <p class="sd-footer">SHELFBOT v1.0 · Built with ❤️</p>
+        <p class="sd-footer">BookFLow v2.0 · Built with ❤️</p>
       </aside>`;
 
     document.body.appendChild(overlay);
@@ -234,6 +287,67 @@ const Settings = (() => {
       </div>`).join("");
   }
 
+  // ── Voice Settings helpers ─────────────────────────────────────────────────
+  function _renderVoiceCards() {
+    const current = TTSEngine.getVoice();
+    const opts = [
+      { key: "female",  label: "Female",  icon: "👩", desc: "Soft & natural"  },
+      { key: "male",    label: "Male",    icon: "👨", desc: "Deep & clear"    },
+      { key: "neutral", label: "Neutral", icon: "🧑", desc: "Balanced"        },
+      { key: "shimmer", label: "Shimmer", icon: "✨", desc: "Expressive"      },
+      { key: "echo",    label: "Echo",    icon: "🔊", desc: "Resonant"        },
+    ];
+    return opts.map(o => `
+      <button class="sd-voice-card ${current === o.key ? 'selected' : ''}"
+              id="vc-${o.key}"
+              onclick="Settings._setVoice('${o.key}')">
+        <span class="vc-icon">${o.icon}</span>
+        <span class="vc-label">${o.label}</span>
+        <span class="vc-desc">${o.desc}</span>
+      </button>`).join("");
+  }
+
+  function _setVoice(key) {
+    TTSEngine.setVoice(key);
+    // Update card selection
+    document.querySelectorAll(".sd-voice-card").forEach(c => c.classList.remove("selected"));
+    const card = document.getElementById(`vc-${key}`);
+    if (card) card.classList.add("selected");
+    Gamification.showToast(`🎙️ Voice changed to ${key.charAt(0).toUpperCase() + key.slice(1)}!`, "info");
+  }
+
+  function _previewVoice() {
+    const btn = document.getElementById("sd-preview-btn");
+    if (btn) { btn.textContent = "▶ Playing…"; btn.disabled = true; }
+    TTSEngine.on("end",   () => { if (btn) { btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg> Preview Voice'; btn.disabled = false; } });
+    TTSEngine.on("error", () => { if (btn) { btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg> Preview Voice'; btn.disabled = false; } });
+    TTSEngine.speak("Hello! I'm your BookFLow Library Assistant. How can I help you today?");
+  }
+
+  function _onSpeedChange(val) {
+    const rate = parseFloat(val);
+    TTSEngine.setSpeed(rate);
+    const display = document.getElementById("sd-speed-display");
+    if (display) display.textContent = rate.toFixed(1) + "×";
+  }
+
+  function _toggleVoiceResp() {
+    const newState = !TTSEngine.isEnabled();
+    TTSEngine.setEnabled(newState);
+    const btn = document.getElementById("toggle-voice-resp");
+    if (btn) {
+      btn.classList.toggle("on", newState);
+      btn.setAttribute("aria-pressed", newState);
+    }
+    // Update mute button in AssistantModule header if visible
+    const ttsBtn = document.getElementById("tts-toggle-btn");
+    if (ttsBtn) ttsBtn.classList.toggle("active", newState);
+    Gamification.showToast(
+      newState ? "🔊 Voice response enabled" : "🔇 Voice response muted",
+      newState ? "success" : "info"
+    );
+  }
+
   function _clearNotifs() {
     localStorage.removeItem("libramate_notifications");
     const list = document.getElementById("sd-notif-list");
@@ -278,5 +392,7 @@ const Settings = (() => {
     load, open, close, notify,
     _toggleNotif, _setTheme, _setFont,
     _clearNotifs, _submitFeedback, _confirmLogout, _resetProgress,
+    // Voice settings
+    _setVoice, _previewVoice, _onSpeedChange, _toggleVoiceResp,
   };
 })();

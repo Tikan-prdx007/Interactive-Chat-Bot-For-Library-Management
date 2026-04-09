@@ -21,9 +21,9 @@ const LoginScreen = (() => {
         </div>
         <div class="login-card">
           <div class="login-brand">
-            <div class="login-logo" style="width:72px;height:72px;overflow:hidden;border-radius:14px;"><img src="AmadeusAI.png" alt="AmadeusAI Logo" style="width:100%;height:100%;object-fit:cover;"></div>
+            <div class="login-logo" style="width:72px;height:72px;overflow:hidden;border-radius:14px;"><img src="BookFLow.png" alt="BookFLow Logo" style="width:100%;height:100%;object-fit:cover;"></div>
             <div class="login-brand-text">
-              <div class="login-brand-name">AmadeusAI</div>
+              <div class="login-brand-name">BookFLow</div>
               <div class="login-brand-sub">AI-Powered Library & Study Companion</div>
             </div>
           </div>
@@ -91,14 +91,12 @@ const LoginScreen = (() => {
             <button type="submit" class="btn-login" id="reg-submit">Create Account →</button>
           </form>
 
-          <!-- Registered users quick-switch -->
-          <div id="quick-switch" class="quick-switch"></div>
+          <!-- Registered users quick-switch (removed) -->
 
           <p class="login-footer">Your progress is saved privately for your account only 🔒</p>
         </div>
       </div>`;
     document.body.insertBefore(overlay, document.body.firstChild);
-    renderQuickSwitch();
   }
 
   function hide() {
@@ -173,30 +171,5 @@ const LoginScreen = (() => {
     else { inp.type = "password"; btn.textContent = "👁"; }
   }
 
-  function renderQuickSwitch() {
-    const users = Auth.listUsers();
-    const wrap = document.getElementById("quick-switch");
-    if (!wrap || !users.length) return;
-    wrap.innerHTML = `<div class="qs-label">Quick sign-in as:</div>
-      <div class="qs-chips">
-        ${users.map(u => {
-      const data = Auth.loadUserData(u);
-      const avatar = data?.meta?.avatar || "👤";
-      const name = data?.meta?.displayName || u;
-      return `<div class="qs-chip" onclick="LoginScreen.quickLogin('${u}')">
-            <span class="qs-av">${avatar}</span>
-            <span class="qs-name">${name}</span>
-          </div>`;
-    }).join("")}
-      </div>`;
-  }
-
-  function quickLogin(username) {
-    // Fill the username field and focus password
-    switchTab("login");
-    document.getElementById("login-username").value = username;
-    document.getElementById("login-password").focus();
-  }
-
-  return { show, hide, switchTab, doLogin, doRegister, pickAvatar, togglePw, quickLogin };
+  return { show, hide, switchTab, doLogin, doRegister, pickAvatar, togglePw };
 })();

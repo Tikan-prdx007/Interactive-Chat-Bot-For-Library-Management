@@ -1,32 +1,12 @@
 // ─── Unified AI Assistant Module ──────────────────────────────────────────────
-// Fuses chat + voice into one seamless experience.
-// KEY MIC FIXES:
-//   1. SpeechRecognition looked up at CALL TIME via _getSpeechAPI(), not at module load
-//   2. isListening force-reset before each start() so stale state never blocks
-//   3. onend only cleans up if we haven't already manually stopped
-//   4. recognition.start() wrapped in try/catch for permission-denied cases
-//   5. All errors surfaced to the user in the listen bar with clear messages
+// Fully unified chat + voice interface.
+// Delegates TTS → TTSEngine  |  Mic → SpeechRecognitionModule
 
 const AssistantModule = (() => {
 
-  // ── Module state ────────────────────────────────────────────────────────────
-  let recognition    = null;   // SpeechRecognition instance
-  let isListening    = false;  // mic currently active?
+  // ── Module state ─────────────────────────────────────────────────────────────
   let isThinking     = false;  // waiting for API response?
-  let ttsEnabled     = true;   // read AI replies aloud?
   let continuousMode = false;  // auto-restart mic after each response?
-
-  // ── Runtime Speech API detection ────────────────────────────────────────────
-  // Must be called at runtime, NOT at module-load time.
-  // window.SpeechRecognition may be undefined until a user gesture occurs on
-  // some browsers (especially mobile Chrome / Edge).
-  function _getSpeechAPI() {
-    return window.SpeechRecognition || window.webkitSpeechRecognition || null;
-  }
-
-  function _hasSpeech() {
-    return !!_getSpeechAPI();
-  }
 
   // ─────────────────────────────────────────────────────────────────────────────
   // RENDER
@@ -36,7 +16,7 @@ const AssistantModule = (() => {
     const panel = document.getElementById("panel-assistant");
     if (!panel) return;
 
-    const speechOk = _hasSpeech();
+    const speechOk = SpeechRecognitionModule.isSupported();
 
     panel.innerHTML = `
       <div class="asst-shell">
@@ -48,12 +28,13 @@ const AssistantModule = (() => {
               <div class="asst-avatar-orb" id="asst-avatar-orb">
                 <span>🤖</span>
               </div>
+              <!-- Speaking equalizer wave (visible while TTS plays) -->
               <div class="asst-wave-bars" id="asst-wave-bars">
                 <span></span><span></span><span></span><span></span><span></span>
               </div>
             </div>
             <div class="asst-title-block">
-              <div class="asst-name">AmadeusAI</div>
+              <div class="asst-name">BookFLow</div>
               <div class="asst-status">
                 <span class="asst-status-dot online" id="asst-status-dot"></span>
                 <span id="asst-status-text">Ready to assist you</span>
@@ -61,7 +42,8 @@ const AssistantModule = (() => {
             </div>
           </div>
           <div class="asst-header-right">
-            <button class="asst-icon-btn ${ttsEnabled ? 'active' : ''}" id="tts-toggle-btn"
+            <!-- Mute / unmute voice -->
+            <button class="asst-icon-btn ${TTSEngine.isEnabled() ? 'active' : ''}" id="tts-toggle-btn"
               onclick="AssistantModule.toggleTTS()" title="Toggle AI voice">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
@@ -69,6 +51,7 @@ const AssistantModule = (() => {
                 <path d="M19.07 4.93a10 10 0 0 1 0 14.14" id="tts-wave-path2"/>
               </svg>
             </button>
+            <!-- Continuous conversation mode -->
             ${speechOk ? `
             <button class="asst-icon-btn ${continuousMode ? 'active' : ''}" id="continuous-btn"
               onclick="AssistantModule.toggleContinuous()" title="Continuous voice mode">
@@ -77,10 +60,18 @@ const AssistantModule = (() => {
                 <polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
               </svg>
             </button>` : ''}
+            <!-- Clear history -->
             <button class="asst-icon-btn" onclick="AssistantModule.clearHistory()" title="Clear conversation">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
                 <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+              </svg>
+            </button>
+            <!-- Settings shortcut -->
+            <button class="asst-icon-btn" onclick="Settings.open()" title="Voice settings">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
               </svg>
             </button>
           </div>
@@ -99,7 +90,7 @@ const AssistantModule = (() => {
 
         <!-- ── Input area ───────────────────────────────────────────────── -->
         <div class="asst-input-wrap">
-          <!-- Listen banner (hidden by default) -->
+          <!-- Listen banner (shown while recording) -->
           <div class="asst-listen-bar" id="asst-listen-bar">
             <div class="listen-pulse"></div>
             <span id="asst-interim-text">Listening…</span>
@@ -116,7 +107,7 @@ const AssistantModule = (() => {
               oninput="AssistantModule.autoResize(this)"
             ></textarea>
 
-            <!-- Mic button — always rendered; disabled attribute if unsupported -->
+            <!-- Mic button -->
             <button
               class="asst-mic-btn${speechOk ? '' : ' mic-disabled'}"
               id="asst-mic-btn"
@@ -145,6 +136,20 @@ const AssistantModule = (() => {
       </div>
     `;
 
+    // Wire TTSEngine speaking events → avatar animation
+    TTSEngine.on("start", () => {
+      document.getElementById("asst-wave-bars")?.classList.add("animating");
+      _setStatus("speaking");
+    });
+    TTSEngine.on("end", () => {
+      document.getElementById("asst-wave-bars")?.classList.remove("animating");
+      _setStatus("ready");
+      // Continuous mode: re-listen after TTS finishes
+      if (continuousMode && SpeechRecognitionModule.isSupported() && !SpeechRecognitionModule.isListening()) {
+        setTimeout(startListening, 400);
+      }
+    });
+
     _loadHistory();
 
     // Greet once per session
@@ -152,9 +157,10 @@ const AssistantModule = (() => {
       const hr   = new Date().getHours();
       const time = hr < 12 ? "Good morning" : hr < 17 ? "Good afternoon" : "Good evening";
       _addMessage("bot",
-        `${time}, <strong>${s.name}</strong>! 👋 I'm your AI assistant. ` +
+        `${time}, <strong>${s.name}</strong>! 👋 I'm your AI library assistant. ` +
         `You've studied <strong>${s.studyHoursWeek} hrs</strong> this week and your ` +
-        `streak is <strong>${s.streak} days</strong> 🔥 — What can I help you with today?`
+        `streak is <strong>${s.streak} days</strong> 🔥 — What can I help you with today?`,
+        { skipTTS: true } // don't auto-read the greeting, just show it
       );
       sessionStorage.setItem("asst-greeted", "1");
     }
@@ -196,7 +202,7 @@ const AssistantModule = (() => {
     return div;
   }
 
-  function _addMessage(role, text) {
+  function _addMessage(role, text, opts = {}) {
     const container = document.getElementById("asst-messages");
     if (!container) return;
     const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
@@ -221,7 +227,12 @@ const AssistantModule = (() => {
       AppState.save();
     }
 
-    if (role === "bot" && ttsEnabled) _speak(_stripHTML(text));
+    // Speak bot messages via TTSEngine (unless explicitly skipped)
+    if (role === "bot" && !opts.skipTTS) {
+      // Stop previous speech before starting new
+      TTSEngine.stop();
+      TTSEngine.speak(_stripHTML(text));
+    }
   }
 
   function _showTyping() {
@@ -243,7 +254,6 @@ const AssistantModule = (() => {
   function _removeTyping() {
     const t = document.getElementById("asst-typing");
     if (t) t.remove();
-    _setStatus("ready");
   }
 
   function _scrollBottom() {
@@ -256,6 +266,12 @@ const AssistantModule = (() => {
     if (chips) { chips.style.opacity = "0"; chips.style.pointerEvents = "none"; }
   }
 
+  function _stripHTML(html) {
+    const d = document.createElement("div");
+    d.innerHTML = html;
+    return d.textContent || d.innerText || "";
+  }
+
   // ─────────────────────────────────────────────────────────────────────────────
   // STATUS / AVATAR
   // ─────────────────────────────────────────────────────────────────────────────
@@ -266,21 +282,17 @@ const AssistantModule = (() => {
     const orb  = document.getElementById("asst-avatar-orb");
     if (!text) return;
 
-    if (state === "listening") {
-      text.textContent = "Listening…";
-      if (dot) dot.className = "asst-status-dot listening";
-      orb?.classList.add("orb-listening");
-      document.getElementById("asst-wave-bars")?.classList.add("animating");
-    } else if (state === "thinking") {
-      text.textContent = "Thinking…";
-      if (dot) dot.className = "asst-status-dot thinking";
-      orb?.classList.remove("orb-listening");
-      document.getElementById("asst-wave-bars")?.classList.remove("animating");
-    } else {
-      text.textContent = "Ready to assist you";
-      if (dot) dot.className = "asst-status-dot online";
-      orb?.classList.remove("orb-listening");
-      document.getElementById("asst-wave-bars")?.classList.remove("animating");
+    const states = {
+      listening: { label: "Listening…",         dot: "listening", orb: true  },
+      thinking:  { label: "Thinking…",          dot: "thinking",  orb: false },
+      speaking:  { label: "Speaking…",           dot: "speaking",  orb: false },
+      ready:     { label: "Ready to assist you", dot: "online",    orb: false },
+    };
+    const s = states[state] || states.ready;
+    text.textContent = s.label;
+    if (dot) dot.className = `asst-status-dot ${s.dot}`;
+    if (orb) {
+      s.orb ? orb.classList.add("orb-listening") : orb.classList.remove("orb-listening");
     }
   }
 
@@ -291,10 +303,14 @@ const AssistantModule = (() => {
   async function send(text) {
     if (!text.trim() || isThinking) return;
     isThinking = true;
+
+    // Stop any ongoing TTS when sending a new message (interrupt)
+    TTSEngine.stop();
+
     const btn = document.getElementById("asst-send-btn");
     if (btn) btn.disabled = true;
 
-    _addMessage("user", text);
+    _addMessage("user", text, { skipTTS: true });
     _showTyping();
 
     try {
@@ -304,20 +320,16 @@ const AssistantModule = (() => {
         body:    JSON.stringify({ message: text }),
       });
       _removeTyping();
+      _setStatus("ready");
       if (!res.ok) throw new Error("HTTP " + res.status);
       const data  = await res.json();
       const reply = data.reply || data.message || "Sorry, I couldn't get a response.";
       _addMessage("bot", reply.replace(/\n/g, "<br>"));
 
-      // Continuous mode: re-listen after TTS finishes
-      if (continuousMode && _hasSpeech() && !isListening) {
-        const utt = window._lastUtt;
-        if (utt) utt.onend = () => startListening();
-        else setTimeout(() => startListening(), 600);
-      }
     } catch (err) {
       _removeTyping();
-      _addMessage("bot", "⚠️ Couldn't reach the server. Please check your connection.");
+      _setStatus("ready");
+      _addMessage("bot", "⚠️ Couldn't reach the server. Please check your connection.", { skipTTS: true });
       console.error("[AssistantModule] fetch error:", err);
     } finally {
       isThinking = false;
@@ -330,8 +342,8 @@ const AssistantModule = (() => {
     if (!inp) return;
     const val = inp.value.trim();
     if (!val) return;
-    inp.value          = "";
-    inp.style.height   = "auto";
+    inp.value        = "";
+    inp.style.height = "auto";
     send(val);
   }
 
@@ -347,108 +359,52 @@ const AssistantModule = (() => {
   }
 
   // ─────────────────────────────────────────────────────────────────────────────
-  // VOICE INPUT  (the fixed section)
+  // VOICE INPUT — delegates to SpeechRecognitionModule
   // ─────────────────────────────────────────────────────────────────────────────
 
   function toggleMic() {
-    console.log("[Mic] toggleMic — isListening:", isListening);
-    isListening ? stopListening() : startListening();
+    SpeechRecognitionModule.isListening() ? stopListening() : startListening();
   }
 
   function startListening() {
-    console.log("[Mic] startListening");
+    // Stop TTS so mic doesn't pick it up
+    TTSEngine.stop();
 
-    const SR = _getSpeechAPI();
-    if (!SR) {
-      console.warn("[Mic] SpeechRecognition unavailable");
-      _listenBarError("Voice not supported. Use Chrome or Edge.");
-      return;
-    }
-
-    // Abort any stale instance and reset state BEFORE creating a new one.
-    // This prevents the isListening guard from blocking a fresh attempt.
-    if (recognition) { try { recognition.abort(); } catch (_) {} recognition = null; }
-    isListening = false;
-
-    // Stop any TTS so mic doesn't pick it up
-    if (window.speechSynthesis) window.speechSynthesis.cancel();
-
-    recognition = new SR();
-    recognition.lang            = "en-US";
-    recognition.interimResults  = true;
-    recognition.maxAlternatives = 1;
-    recognition.continuous      = false;
-
-    recognition.onstart = () => {
-      console.log("[Mic] onstart ✓");
-      isListening = true;
-      _setMicActive(true);
-      _setStatus("listening");
-      _listenBarShow();
-    };
-
-    recognition.onresult = (e) => {
-      const interim = Array.from(e.results).map(r => r[0].transcript).join("");
-      const el = document.getElementById("asst-interim-text");
-      if (el) el.textContent = interim || "Listening…";
-
-      if (e.results[e.results.length - 1].isFinal) {
-        const finalText = interim.trim();
-        console.log("[Mic] Final:", finalText);
-        // Mark stopped BEFORE cleanup so onend doesn't double-fire
-        isListening = false;
+    SpeechRecognitionModule.start({
+      onStart: () => {
+        _setMicActive(true);
+        _setStatus("listening");
+        _listenBarShow();
+      },
+      onInterim: (text) => {
+        const el = document.getElementById("asst-interim-text");
+        if (el) el.textContent = text || "Listening…";
+      },
+      onFinal: (finalText) => {
         _listenCleanup();
-
         if (continuousMode) {
           send(finalText);
         } else {
           const inp = document.getElementById("asst-input");
           if (inp && finalText) { inp.value = finalText; autoResize(inp); inp.focus(); }
         }
-      }
-    };
-
-    recognition.onerror = (e) => {
-      console.error("[Mic] error:", e.error);
-      isListening = false;
-      const msgs = {
-        "not-allowed":   "Microphone access denied — allow it in browser settings.",
-        "no-speech":     "No speech detected. Try speaking louder.",
-        "network":       "Network error during voice recognition.",
-        "audio-capture": "No microphone found.",
-        "aborted":       "Listening cancelled.",
-      };
-      _listenBarError(msgs[e.error] || "Error: " + e.error);
-      setTimeout(_listenCleanup, 2000);
-    };
-
-    recognition.onend = () => {
-      console.log("[Mic] onend — isListening:", isListening);
-      // Only clean up if we haven't already done so in onresult or stopListening
-      if (isListening) { isListening = false; _listenCleanup(); }
-    };
-
-    try {
-      recognition.start();
-      console.log("[Mic] recognition.start() ✓");
-    } catch (err) {
-      console.error("[Mic] start() threw:", err);
-      isListening = false;
-      recognition = null;
-      _listenBarError("Could not start mic: " + err.message);
-    }
+      },
+      onError: (_code, msg) => {
+        _listenBarError(msg);
+        setTimeout(_listenCleanup, 2200);
+      },
+      onEnd: () => {
+        _listenCleanup();
+      },
+    });
   }
 
   function stopListening() {
-    console.log("[Mic] stopListening");
-    isListening = false;
-    if (recognition) { try { recognition.stop(); } catch (_) {} recognition = null; }
+    SpeechRecognitionModule.stop();
     _listenCleanup();
   }
 
-  // Shared cleanup for all end paths (success, error, manual stop)
   function _listenCleanup() {
-    recognition = null;
     _setMicActive(false);
     _setStatus("ready");
     _listenBarHide();
@@ -484,52 +440,32 @@ const AssistantModule = (() => {
   }
 
   // ─────────────────────────────────────────────────────────────────────────────
-  // TEXT-TO-SPEECH
-  // ─────────────────────────────────────────────────────────────────────────────
-
-  function _speak(text) {
-    if (!window.speechSynthesis || !ttsEnabled || !text.trim()) return;
-    window.speechSynthesis.cancel();
-    const utt = new SpeechSynthesisUtterance(text);
-    utt.lang  = "en-US";
-    utt.rate  = 1.05;
-    utt.pitch = 1.05;
-    window._lastUtt = utt;
-    window.speechSynthesis.speak(utt);
-  }
-
-  function _stripHTML(html) {
-    const d = document.createElement("div");
-    d.innerHTML = html;
-    return d.textContent || d.innerText || "";
-  }
-
-  // ─────────────────────────────────────────────────────────────────────────────
   // CONTROLS
   // ─────────────────────────────────────────────────────────────────────────────
 
   function toggleTTS() {
-    ttsEnabled = !ttsEnabled;
-    if (!ttsEnabled && window.speechSynthesis) window.speechSynthesis.cancel();
+    TTSEngine.setEnabled(!TTSEngine.isEnabled());
     _updateTTSButton();
+    if (!TTSEngine.isEnabled()) TTSEngine.stop();
   }
 
   function _updateTTSButton() {
     const btn = document.getElementById("tts-toggle-btn");
     if (!btn) return;
-    btn.classList.toggle("active", ttsEnabled);
-    btn.title = ttsEnabled ? "Mute AI voice" : "Enable AI voice";
+    const enabled = TTSEngine.isEnabled();
+    btn.classList.toggle("active", enabled);
+    btn.title = enabled ? "Mute AI voice" : "Enable AI voice";
     const p1 = document.getElementById("tts-wave-path");
     const p2 = document.getElementById("tts-wave-path2");
-    if (p1) p1.style.display = ttsEnabled ? "" : "none";
-    if (p2) p2.style.display = ttsEnabled ? "" : "none";
+    if (p1) p1.style.display = enabled ? "" : "none";
+    if (p2) p2.style.display = enabled ? "" : "none";
   }
 
   function toggleContinuous() {
     continuousMode = !continuousMode;
     _updateContinuousButton();
-    if (!continuousMode && isListening) stopListening();
-    if (continuousMode  && !isListening) startListening();
+    if (!continuousMode && SpeechRecognitionModule.isListening()) stopListening();
+    if (continuousMode  && !SpeechRecognitionModule.isListening()) startListening();
   }
 
   function _updateContinuousButton() {
@@ -544,7 +480,7 @@ const AssistantModule = (() => {
     AppState.chatHistory.length = 0;
     AppState.save();
     sessionStorage.removeItem("asst-greeted");
-    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    TTSEngine.stop();
     stopListening();
     render();
   }

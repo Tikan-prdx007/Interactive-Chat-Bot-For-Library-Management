@@ -1,11 +1,12 @@
 // ─── Theme Module ─────────────────────────────────────────────────────────────
-// Manages light/dark mode. Reads from localStorage, applies immediately on
-// load to prevent flash, and exposes a toggle for the UI button.
+// Always starts in dark mode on every page visit.
+// Exposes a toggle for the UI button (persists choice until next page load).
 
 const Theme = (() => {
     const KEY = "libramate_theme";
 
     function get() {
+        // Always default to dark — user can toggle in-session but next visit resets to dark
         return localStorage.getItem(KEY) || "dark";
     }
 
@@ -21,8 +22,8 @@ const Theme = (() => {
         apply(get() === "dark" ? "light" : "dark");
     }
 
-    // Apply immediately on script load (before DOMContentLoaded) to avoid flash
-    apply(get());
+    // ALWAYS force dark on every page load — overrides any stale saved value
+    apply("dark");
 
     return { get, apply, toggle };
 })();
