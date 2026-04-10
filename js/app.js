@@ -47,10 +47,11 @@ const AppState = (() => {
 const App = (() => {
 
   const PANELS = {
-    home: () => renderHome(),
-    library: () => LibraryModule.render(),
+    home:      () => renderHome(),
+    library:   () => LibraryModule.render(),
     dashboard: () => DashboardModule.render(),
     assistant: () => AssistantModule.render(),
+    quiz:      () => QuizModule.render(),
   };
 
   let activePanel = "home";
@@ -100,16 +101,18 @@ const App = (() => {
 
   function checkStreak() {
     const s = AppState.student;
-    if (s.streak >= 5) Gamification.checkAndAwardBadge("focused_learner");
+    if (s.streak >= 3)  Gamification.checkAndAwardBadge("streak_3");
+    if (s.streak >= 5)  Gamification.checkAndAwardBadge("focused_learner");
     if (s.topicsCovered >= 15) Gamification.checkAndAwardBadge("scholar");
-    if (s.xp >= 1000) Gamification.checkAndAwardBadge("master_mind");
+    if (s.xp >= 1000)  Gamification.checkAndAwardBadge("master_mind");
   }
 
   function renderSidebar() {
     const nav = document.getElementById("sidebar-nav");
     const items = [
-      { id: "home", icon: "🏠", label: "Home" },
-      { id: "library", icon: "📚", label: "Library" },
+      { id: "home",      icon: "🏠", label: "Home" },
+      { id: "library",   icon: "📚", label: "Library" },
+      { id: "quiz",      icon: "🧠", label: "Quiz" },
       { id: "dashboard", icon: "📊", label: "Dashboard" },
       { id: "assistant", icon: "🤖", label: "Assistant" },
     ];
@@ -165,7 +168,8 @@ const App = (() => {
           </div>
           <div class="home-quick-grid">
             <div class="quick-card" onclick="App.navigate('library')"><div class="qc-icon">📚</div><div class="qc-title">Library</div><div class="qc-desc">Search & reserve 30+ books</div></div>
-            <div class="quick-card" onclick="App.navigate('dashboard')"><div class="qc-icon">📊</div><div class="qc-title">Dashboard</div><div class="qc-desc">Track your stats & performance</div></div>
+            <div class="quick-card" onclick="App.navigate('quiz')" style="--qc-accent:#6c63ff"><div class="qc-icon">🧠</div><div class="qc-title">Daily Quiz</div><div class="qc-desc">Test knowledge · Earn XP · Get badges</div></div>
+            <div class="quick-card" onclick="App.navigate('dashboard')"><div class="qc-icon">📊</div><div class="qc-title">Dashboard</div><div class="qc-desc">AI analytics & smart insights</div></div>
             <div class="quick-card" onclick="App.navigate('assistant')"><div class="qc-icon">🤖</div><div class="qc-title">AI Assistant</div><div class="qc-desc">Chat & voice — ask me anything</div></div>
           </div>
           <div class="home-recommend">

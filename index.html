@@ -7,7 +7,7 @@
   <title>BookFLow — AI Library & Study Companion</title>
   <meta name="description"
     content="BookFLow: Your AI-powered interactive library and study companion. Search books, track progress, and level up your academics." />
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css?v=2" />
   <!-- Load theme BEFORE render to prevent flash -->
   <script src="js/theme.js"></script>
 </head>
@@ -93,6 +93,9 @@
         <!-- AI Assistant Panel (unified chat + voice) -->
         <div class="panel" id="panel-assistant"></div>
 
+        <!-- Quiz Panel -->
+        <div class="panel" id="panel-quiz"></div>
+
       </div><!-- /content -->
     </div><!-- /main -->
 
@@ -103,20 +106,21 @@
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
   <!-- ── Scripts (order matters!) ──────────────────────────────────────────── -->
-  <script src="js/data.js"></script>
+  <script src="js/data.js?v=2"></script>
   <script src="js/auth.js"></script>
-  <script src="js/gamification.js"></script>
+  <script src="js/gamification.js?v=2"></script>
   <script src="js/bput_data.js"></script>
   <script src="js/library.js"></script>
   <script src="js/barcode.js"></script>
-  <script src="js/dashboard.js"></script>
+  <script src="js/dashboard.js?v=2"></script>
   <script src="js/chat.js"></script>
   <script src="js/voice.js"></script>
   <script src="js/speechRecognition.js"></script>
   <script src="js/assistant.js"></script>
+  <script src="js/quiz.js?v=2"></script>
   <script src="js/login.js"></script>
   <script src="js/settings.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/app.js?v=2"></script>
   <script>
     // Initialize TTSEngine as soon as DOM is ready, before App.init()
     document.addEventListener("DOMContentLoaded", () => {
